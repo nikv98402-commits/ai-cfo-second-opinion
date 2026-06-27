@@ -40,6 +40,7 @@ AI-CFO second opinion for CEOs and COOs of growing companies: check financial de
 - [Product Spec](docs/product-spec.md)
 - [Backlog](docs/backlog.md)
 - [Design System](DESIGN.md)
+- [Finalized Prototype](docs/finalized-prototype.html)
 - [Design Preview](docs/design-preview.html)
 
 ## Status
