@@ -62,6 +62,7 @@
       font-family: "IBM Plex Sans", sans-serif;
       font-size: 14px;
       line-height: 1.45;
+      overflow-x: hidden;
     }
 
     .shell {
@@ -69,6 +70,8 @@
       display: grid;
       grid-template-columns: 248px minmax(0, 1fr) 320px;
       grid-template-rows: 58px minmax(0, 1fr);
+      width: 100%;
+      overflow-x: hidden;
     }
 
     .topbar {
@@ -76,6 +79,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 16px;
       padding: 0 20px;
       border-bottom: 1px solid var(--line-200);
       background: var(--paper-000);
@@ -88,6 +92,7 @@
       font-family: "Commissioner", sans-serif;
       font-weight: 700;
       font-size: 17px;
+      min-width: 0;
     }
 
     .mark {
@@ -158,6 +163,7 @@
     main {
       padding: 22px;
       overflow: auto;
+      min-width: 0;
     }
 
     .rail {
@@ -198,6 +204,7 @@
       border: 1px solid var(--line-200);
       border-radius: 6px;
       box-shadow: var(--shadow);
+      min-width: 0;
     }
 
     .panel-head {
@@ -352,6 +359,7 @@
         padding: 6px;
         border-right: 0;
         border-top: 1px solid var(--line-200);
+        overflow: hidden;
       }
       .nav-title { display: none; }
       .nav-item {
@@ -359,13 +367,62 @@
         justify-content: center;
         align-items: center;
         font-size: 12px;
+        min-width: 0;
+        padding: 8px 4px;
+        text-align: center;
       }
+      .nav-item span:first-child {
+        display: inline;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .nav-item span:last-child { display: none; }
       .nav-item:nth-of-type(n+6) { display: none; }
+      .topbar { padding: 0 14px; }
+      .brand {
+        font-size: 15px;
+        line-height: 20px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .top-actions .chip,
+      .top-actions .status { display: none; }
+      #themeToggle {
+        width: 40px;
+        min-width: 40px;
+        padding: 0;
+        font-size: 0;
+      }
+      #themeToggle::before {
+        content: "Aa";
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .panel-head {
+        display: block;
+      }
+      .panel-head > * + * {
+        margin-top: 8px;
+      }
+      .label {
+        max-width: 100%;
+        white-space: normal;
+      }
       main { padding: 16px 14px 80px; }
       .page-head { display: block; }
-      .top-actions .chip { display: none; }
       .three { grid-template-columns: 1fr; }
       .risk { grid-template-columns: 1fr; }
+      table {
+        table-layout: fixed;
+        font-size: 12px;
+      }
+      th, td {
+        padding: 8px 6px;
+        overflow-wrap: anywhere;
+      }
       .palette { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
