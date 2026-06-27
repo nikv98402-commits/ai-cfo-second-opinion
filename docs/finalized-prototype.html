@@ -388,6 +388,50 @@
     [data-pretext][contenteditable="true"]:hover { background: color-mix(in srgb, var(--info-bg) 42%, transparent); }
 
     .mobile-context-button { display: none; }
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 50;
+      max-width: min(360px, calc(100vw - 28px));
+      border: 1px solid var(--line-300);
+      border-radius: 6px;
+      background: var(--paper-000);
+      color: var(--ink-900);
+      box-shadow: var(--shadow);
+      padding: 12px 14px;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+    }
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .context-drawer {
+      position: fixed;
+      inset: auto 0 0 0;
+      z-index: 45;
+      max-height: 78vh;
+      overflow: auto;
+      border-top: 1px solid var(--line-300);
+      background: var(--paper-000);
+      box-shadow: 0 -18px 44px rgba(23, 32, 31, 0.18);
+      padding: 18px;
+      display: none;
+    }
+    .context-drawer.visible { display: block; }
+    .drawer-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    [aria-busy="true"] {
+      cursor: wait;
+      opacity: 0.78;
+    }
 
     @media (max-width: 1180px) {
       .app { grid-template-columns: 246px minmax(0, 1fr); }
@@ -457,10 +501,12 @@
       .answer-section, .composer textarea { padding-left: 13px; padding-right: 13px; }
       button { width: fit-content; max-width: 100%; }
       .composer-bar .primary { width: 100%; }
+      .toast { left: 14px; right: 14px; bottom: 76px; }
     }
 
     @media (prefers-reduced-motion: no-preference) {
       button, .case-card, .answer, .metric { transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease; }
+      .toast { transition: opacity 160ms ease, transform 160ms ease; }
     }
   </style>
 </head>
@@ -485,28 +531,28 @@
         <h2 data-i18n="cases">Кейсы</h2>
         <button aria-label="New case">+</button>
       </div>
-      <button class="case-card active">
+      <button class="case-card active" data-case="discount">
         <span class="case-title-row">
           <strong data-i18n="caseDiscountShort">Скидка 12%</strong>
           <span class="label high" data-i18n="needsData">Нужны данные</span>
         </span>
         <span class="case-meta" data-i18n="caseDiscountMeta">Pricing · средняя уверенность · 27.06</span>
       </button>
-      <button class="case-card">
+      <button class="case-card" data-case="cash">
         <span class="case-title-row">
           <strong data-i18n="caseCashShort">Прибыль без cash</strong>
           <span class="label medium" data-i18n="open">Открыт</span>
         </span>
         <span class="case-meta" data-i18n="caseCashMeta">Liquidity · низкая уверенность · 26.06</span>
       </button>
-      <button class="case-card">
+      <button class="case-card" data-case="hire">
         <span class="case-title-row">
           <strong data-i18n="caseHireShort">Найм CFO</strong>
           <span class="label low" data-i18n="answered">Отвечен</span>
         </span>
         <span class="case-meta" data-i18n="caseHireMeta">Hiring · высокая уверенность · 24.06</span>
       </button>
-      <button class="case-card">
+      <button class="case-card" data-case="budget">
         <span class="case-title-row">
           <strong data-i18n="caseBudgetShort">Бюджетирование</strong>
           <span class="label info" data-i18n="draft">Черновик</span>
@@ -522,7 +568,7 @@
             <h1 id="pageTitle" data-i18n="pageTitle" data-pretext contenteditable="true">Разбор управленческого решения</h1>
             <p data-i18n="pageSubtitle" data-pretext contenteditable="true">Чат работает как дело: вопрос, контекст, финансовая логика, риски и следующий шаг.</p>
           </div>
-          <button class="primary" data-i18n="saveCase">Сохранить кейс</button>
+          <button class="primary" id="saveCaseButton" data-i18n="saveCase">Сохранить кейс</button>
         </section>
 
         <section class="composer" aria-label="Question composer">
@@ -533,14 +579,14 @@
               <span class="label info" data-i18n="contextFiles">3 источника</span>
               <span class="label medium" data-i18n="contextMissing">Не хватает aging ДЗ</span>
             </div>
-            <button class="primary" data-i18n="getOpinion">Получить второе мнение</button>
+            <button class="primary" id="getOpinionButton" data-i18n="getOpinion">Получить второе мнение</button>
           </div>
         </section>
 
         <article class="answer" aria-label="AI-CFO answer">
           <section class="answer-section summary-row">
-            <span class="label high" data-i18n="doNotApprove">Не согласовывать</span>
-            <p data-pretext contenteditable="true"><strong data-i18n="shortAnswer">Короткий ответ:</strong> <span data-i18n="shortAnswerText">скидка 12% рискованна, пока нет модели contribution margin, DSO, запасов и минимального прироста объема для безубыточности.</span></p>
+            <span class="label high" id="decisionBadge" data-i18n="doNotApprove">Не согласовывать</span>
+            <p data-pretext contenteditable="true"><strong data-i18n="shortAnswer">Короткий ответ:</strong> <span id="shortAnswerBody" data-i18n="shortAnswerText">скидка 12% рискованна, пока нет модели contribution margin, DSO, запасов и минимального прироста объема для безубыточности.</span></p>
           </section>
 
           <section class="answer-section">
@@ -551,18 +597,18 @@
             <div class="calc-grid">
               <div class="metric">
                 <span>BDR / P&amp;L</span>
-                <strong>-4.8 pp</strong>
-                <p data-i18n="metricMargin">давление на gross margin</p>
+                <strong id="metricOneValue">-4.8 pp</strong>
+                <p id="metricOneText" data-i18n="metricMargin">давление на gross margin</p>
               </div>
               <div class="metric">
                 <span>Cash Flow</span>
-                <strong>+18 days</strong>
-                <p data-i18n="metricDso">оценочный DSO drag</p>
+                <strong id="metricTwoValue">+18 days</strong>
+                <p id="metricTwoText" data-i18n="metricDso">оценочный DSO drag</p>
               </div>
               <div class="metric">
                 <span data-i18n="balance">Баланс</span>
-                <strong data-i18n="inventory">запасы</strong>
-                <p data-i18n="metricInventory">нужна проверка оборачиваемости</p>
+                <strong id="metricThreeValue" data-i18n="inventory">запасы</strong>
+                <p id="metricThreeText" data-i18n="metricInventory">нужна проверка оборачиваемости</p>
               </div>
             </div>
           </section>
@@ -570,23 +616,23 @@
           <section class="answer-section">
             <div class="section-head">
               <h2 data-i18n="riskTitle">Ключевые риски</h2>
-              <button class="mobile-context-button" data-i18n="openContext">Контекст</button>
+              <button class="mobile-context-button" id="openContextButton" data-i18n="openContext">Контекст</button>
             </div>
             <div class="risk-list">
               <div class="risk-row">
                 <span class="label high" data-i18n="highRisk">Высокий риск</span>
-                <span data-i18n="riskReceivables">Дебиторка может вырасти быстрее маржинальной прибыли.</span>
-                <span class="mono">DSO ?</span>
+                <span id="riskOneText" data-i18n="riskReceivables">Дебиторка может вырасти быстрее маржинальной прибыли.</span>
+                <span class="mono" id="riskOneMeta">DSO ?</span>
               </div>
               <div class="risk-row">
                 <span class="label medium" data-i18n="mediumRisk">Средний риск</span>
-                <span data-i18n="riskVolume">Нет break-even модели: неизвестно, какой объем компенсирует скидку.</span>
-                <span class="mono">12%</span>
+                <span id="riskTwoText" data-i18n="riskVolume">Нет break-even модели: неизвестно, какой объем компенсирует скидку.</span>
+                <span class="mono" id="riskTwoMeta">12%</span>
               </div>
               <div class="risk-row">
                 <span class="label medium" data-i18n="mediumRisk">Средний риск</span>
-                <span data-i18n="riskWorkingCapital">Рост продаж может потребовать больше оборотного капитала.</span>
-                <span class="mono">WC</span>
+                <span id="riskThreeText" data-i18n="riskWorkingCapital">Рост продаж может потребовать больше оборотного капитала.</span>
+                <span class="mono" id="riskThreeMeta">WC</span>
               </div>
             </div>
           </section>
@@ -594,9 +640,9 @@
           <section class="answer-section">
             <h2 data-i18n="questionsTitle">Вопросы финансовой команде</h2>
             <ol class="question-list">
-              <li data-i18n="q1" data-pretext contenteditable="true">Какой прирост объема нужен, чтобы сохранить contribution profit?</li>
-              <li data-i18n="q2" data-pretext contenteditable="true">Как изменятся отсрочка платежа, DSO и лимиты ДЗ?</li>
-              <li data-i18n="q3" data-pretext contenteditable="true">Нужно ли увеличить запасы и сколько cash будет заморожено?</li>
+              <li id="questionOne" data-i18n="q1" data-pretext contenteditable="true">Какой прирост объема нужен, чтобы сохранить contribution profit?</li>
+              <li id="questionTwo" data-i18n="q2" data-pretext contenteditable="true">Как изменятся отсрочка платежа, DSO и лимиты ДЗ?</li>
+              <li id="questionThree" data-i18n="q3" data-pretext contenteditable="true">Нужно ли увеличить запасы и сколько cash будет заморожено?</li>
             </ol>
           </section>
         </article>
@@ -631,6 +677,29 @@
         </div>
       </section>
     </aside>
+    <aside class="context-drawer" id="contextDrawer" aria-label="Mobile company context" aria-hidden="true">
+      <div class="drawer-head">
+        <h2 data-i18n="companyBaseline">База компании</h2>
+        <button id="closeContextButton" aria-label="Close context">×</button>
+      </div>
+      <section class="rail-block">
+        <h3 data-i18n="maturity">Финансовая зрелость</h3>
+        <span class="label medium" data-i18n="stageConfidence">Stage 2 · средняя уверенность</span>
+      </section>
+      <section class="rail-block">
+        <h3 data-i18n="missingData">Недостающие данные</h3>
+        <p data-i18n="missingDataText">Aging дебиторки, оборачиваемость запасов, платежный календарь.</p>
+      </section>
+      <section class="rail-block">
+        <h3 data-i18n="sourceDocs">Источники</h3>
+        <div class="source-list">
+          <span>BDR_Q2.xlsx</span>
+          <span>CashFlow_June.csv</span>
+          <span>Inventory_Q2.xlsx</span>
+        </div>
+      </section>
+    </aside>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </div>
 
   <script>
@@ -702,10 +771,130 @@
       }
     };
 
+    const cases = {
+      discount: {
+        question: {
+          ru: 'Коммерческий отдел просит дать скидку 12%, чтобы выручка выросла на 20%. Что проверить перед согласованием?',
+          en: 'The commercial team asks for a 12% discount to grow revenue by 20%. What should we check before approval?'
+        },
+        badge: { tone: 'high', ru: 'Не согласовывать', en: 'Do not approve' },
+        answer: {
+          ru: 'скидка 12% рискованна, пока нет модели contribution margin, DSO, запасов и минимального прироста объема для безубыточности.',
+          en: 'the 12% discount is risky until contribution margin, DSO, inventory, and break-even volume uplift are modeled.'
+        },
+        metrics: [
+          ['-4.8 pp', { ru: 'давление на gross margin', en: 'gross margin pressure' }],
+          ['+18 days', { ru: 'оценочный DSO drag', en: 'estimated DSO drag' }],
+          [{ ru: 'запасы', en: 'inventory' }, { ru: 'нужна проверка оборачиваемости', en: 'needs turnover check' }]
+        ],
+        risks: [
+          [{ ru: 'Дебиторка может вырасти быстрее маржинальной прибыли.', en: 'Receivables may grow faster than contribution profit.' }, 'DSO ?'],
+          [{ ru: 'Нет break-even модели: неизвестно, какой объем компенсирует скидку.', en: 'No break-even model: required volume uplift is unknown.' }, '12%'],
+          [{ ru: 'Рост продаж может потребовать больше оборотного капитала.', en: 'Sales growth may require more working capital.' }, 'WC']
+        ],
+        questions: [
+          { ru: 'Какой прирост объема нужен, чтобы сохранить contribution profit?', en: 'What volume uplift is needed to preserve contribution profit?' },
+          { ru: 'Как изменятся отсрочка платежа, DSO и лимиты ДЗ?', en: 'How will payment terms, DSO, and receivables limits change?' },
+          { ru: 'Нужно ли увеличить запасы и сколько cash будет заморожено?', en: 'Do we need more inventory, and how much cash will be frozen?' }
+        ]
+      },
+      cash: {
+        question: {
+          ru: 'В BDR есть прибыль, но денег на платежи не хватает. Что может объяснять разрыв?',
+          en: 'P&L shows profit, but cash is tight. What can explain the gap?'
+        },
+        badge: { tone: 'medium', ru: 'Нужен cash bridge', en: 'Cash bridge needed' },
+        answer: {
+          ru: 'прибыль могла остаться в дебиторке, запасах или авансах поставщикам. Нужно собрать bridge между EBITDA и операционным cash flow.',
+          en: 'profit may be trapped in receivables, inventory, or supplier advances. Build a bridge from EBITDA to operating cash flow.'
+        },
+        metrics: [
+          ['+24 days', { ru: 'рост DSO к прошлому кварталу', en: 'DSO increase vs prior quarter' }],
+          ['-9.6M', { ru: 'оценочный cash gap', en: 'estimated cash gap' }],
+          [{ ru: 'ДЗ', en: 'AR' }, { ru: 'нужен aging и лимиты', en: 'aging and limits needed' }]
+        ],
+        risks: [
+          [{ ru: 'Операционная прибыль не превращается в cash.', en: 'Operating profit is not converting into cash.' }, 'OCF'],
+          [{ ru: 'Платежный календарь может скрывать кассовый разрыв 2-3 недели.', en: 'Payment calendar may hide a 2-3 week cash gap.' }, '2-3w'],
+          [{ ru: 'Рост запасов мог съесть эффект EBITDA.', en: 'Inventory growth may have consumed EBITDA gains.' }, 'Inv']
+        ],
+        questions: [
+          { ru: 'Какой bridge между EBITDA и операционным cash flow за период?', en: 'What is the EBITDA to operating cash flow bridge for the period?' },
+          { ru: 'Какая доля просроченной ДЗ старше 30/60/90 дней?', en: 'What share of overdue AR is older than 30/60/90 days?' },
+          { ru: 'Какие платежи критичны в ближайшие 14 дней?', en: 'Which payments are critical in the next 14 days?' }
+        ]
+      },
+      hire: {
+        question: {
+          ru: 'Нам нужен CFO сейчас или сначала закрыть казначейство, FP&A и финансовый контроль?',
+          en: 'Do we need a CFO now, or should we first strengthen treasury, FP&A, and financial control?'
+        },
+        badge: { tone: 'low', ru: 'Путь найма понятен', en: 'Hiring path clear' },
+        answer: {
+          ru: 'если нет платежного календаря, управленческого баланса и регулярного план-факта, сначала нужен сильный Head of Finance/FP&A + treasury контур, затем CFO.',
+          en: 'if there is no payment calendar, management balance sheet, and recurring variance analysis, start with a strong Head of Finance/FP&A plus treasury, then CFO.'
+        },
+        metrics: [
+          ['Stage 2', { ru: 'отчетность есть, контроль неполный', en: 'reporting exists, control incomplete' }],
+          ['30/60/90', { ru: 'план постановки функций', en: 'function build plan' }],
+          [{ ru: 'CFO позже', en: 'CFO later' }, { ru: 'после базового контура', en: 'after the base loop' }]
+        ],
+        risks: [
+          [{ ru: 'Дорогой CFO будет латать операционные дыры вместо стратегии.', en: 'An expensive CFO may patch operational gaps instead of doing strategy.' }, 'Role'],
+          [{ ru: 'Без казначейства CEO все равно останется в ручном cash control.', en: 'Without treasury, the CEO remains in manual cash control.' }, 'Cash'],
+          [{ ru: 'FP&A без финансового контроля даст красивые, но слабые прогнозы.', en: 'FP&A without control produces attractive but weak forecasts.' }, 'Plan']
+        ],
+        questions: [
+          { ru: 'Кто ежедневно владеет платежным календарем и лимитами?', en: 'Who owns the payment calendar and limits daily?' },
+          { ru: 'Есть ли ежемесячный управленческий баланс?', en: 'Is there a monthly management balance sheet?' },
+          { ru: 'Какие решения CEO хочет снять с себя в первые 90 дней?', en: 'Which decisions does the CEO want to delegate in the first 90 days?' }
+        ]
+      },
+      budget: {
+        question: {
+          ru: 'Финансы говорят, что бюджетирование займет шесть месяцев. Это нормально для компании нашего размера?',
+          en: 'Finance says budgeting will take six months. Is that normal for a company our size?'
+        },
+        badge: { tone: 'medium', ru: 'Нужен план внедрения', en: 'Implementation plan needed' },
+        answer: {
+          ru: 'шесть месяцев может быть нормально для полноценного цикла, но первый рабочий forecast и план-факт должны появиться быстрее: обычно за 4-8 недель.',
+          en: 'six months can be reasonable for a full cycle, but the first usable forecast and variance analysis should appear faster: usually within 4-8 weeks.'
+        },
+        metrics: [
+          ['4-8w', { ru: 'первый forecast', en: 'first forecast' }],
+          ['3 forms', { ru: 'BDR, Cash Flow, Balance', en: 'P&L, Cash Flow, Balance' }],
+          [{ ru: 'Stage 2', en: 'Stage 2' }, { ru: 'контроль нужно усилить', en: 'control needs strengthening' }]
+        ],
+        risks: [
+          [{ ru: 'Команда может прятать отсутствие методологии за длинным сроком.', en: 'The team may hide lack of methodology behind a long timeline.' }, 'Scope'],
+          [{ ru: 'Без владельцев ЦФО бюджет станет Excel-упражнением.', en: 'Without responsibility centers, budgeting becomes an Excel exercise.' }, 'CFO'],
+          [{ ru: 'План-факт без cash flow не поможет управлять ликвидностью.', en: 'Variance analysis without cash flow will not help liquidity control.' }, 'Cash']
+        ],
+        questions: [
+          { ru: 'Какая версия нужна через 4 недели: forecast, лимиты или полный бюджет?', en: 'What version is needed in 4 weeks: forecast, limits, or full budget?' },
+          { ru: 'Кто владельцы ЦФО и кто утверждает предпосылки?', en: 'Who owns responsibility centers and approves assumptions?' },
+          { ru: 'Будет ли бюджет связан с платежным календарем?', en: 'Will the budget connect to the payment calendar?' }
+        ]
+      }
+    };
+
     let locale = 'ru';
+    let activeCase = 'discount';
+    let toastTimer;
     const localeToggle = document.getElementById('localeToggle');
     const themeToggle = document.getElementById('themeToggle');
     const textarea = document.querySelector('textarea');
+    const caseButtons = [...document.querySelectorAll('.case-card[data-case]')];
+    const saveCaseButton = document.getElementById('saveCaseButton');
+    const getOpinionButton = document.getElementById('getOpinionButton');
+    const openContextButton = document.getElementById('openContextButton');
+    const closeContextButton = document.getElementById('closeContextButton');
+    const contextDrawer = document.getElementById('contextDrawer');
+    const toast = document.getElementById('toast');
+
+    function t(value) {
+      return typeof value === 'string' ? value : value[locale];
+    }
 
     function applyLocale(nextLocale) {
       locale = nextLocale;
@@ -718,11 +907,79 @@
         const value = strings[locale][node.dataset.i18nPlaceholder];
         if (value) node.placeholder = value;
       });
-      textarea.value = locale === 'ru'
-        ? 'Коммерческий отдел просит дать скидку 12%, чтобы выручка выросла на 20%. Что проверить перед согласованием?'
-        : 'The commercial team asks for a 12% discount to grow revenue by 20%. What should we check before approval?';
       localeToggle.textContent = locale === 'ru' ? 'EN' : 'RU';
+      renderCase(activeCase, { keepQuestion: false });
       relayoutText();
+    }
+
+    function setText(id, value) {
+      document.getElementById(id).textContent = t(value);
+    }
+
+    function renderCase(caseId, options = {}) {
+      activeCase = caseId;
+      const data = cases[caseId];
+      caseButtons.forEach((button) => {
+        button.classList.toggle('active', button.dataset.case === caseId);
+      });
+      if (!options.keepQuestion) textarea.value = data.question[locale];
+
+      const badge = document.getElementById('decisionBadge');
+      badge.className = `label ${data.badge.tone}`;
+      badge.textContent = data.badge[locale];
+      document.getElementById('shortAnswerBody').textContent = data.answer[locale];
+
+      document.getElementById('metricOneValue').textContent = t(data.metrics[0][0]);
+      document.getElementById('metricOneText').textContent = t(data.metrics[0][1]);
+      document.getElementById('metricTwoValue').textContent = t(data.metrics[1][0]);
+      document.getElementById('metricTwoText').textContent = t(data.metrics[1][1]);
+      document.getElementById('metricThreeValue').textContent = t(data.metrics[2][0]);
+      document.getElementById('metricThreeText').textContent = t(data.metrics[2][1]);
+
+      document.getElementById('riskOneText').textContent = t(data.risks[0][0]);
+      document.getElementById('riskOneMeta').textContent = data.risks[0][1];
+      document.getElementById('riskTwoText').textContent = t(data.risks[1][0]);
+      document.getElementById('riskTwoMeta').textContent = data.risks[1][1];
+      document.getElementById('riskThreeText').textContent = t(data.risks[2][0]);
+      document.getElementById('riskThreeMeta').textContent = data.risks[2][1];
+
+      setText('questionOne', data.questions[0]);
+      setText('questionTwo', data.questions[1]);
+      setText('questionThree', data.questions[2]);
+      relayoutText();
+    }
+
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.classList.add('visible');
+      toastTimer = setTimeout(() => toast.classList.remove('visible'), 2200);
+    }
+
+    function simulateOpinion() {
+      const original = getOpinionButton.textContent;
+      getOpinionButton.setAttribute('aria-busy', 'true');
+      getOpinionButton.textContent = locale === 'ru' ? 'Анализируем...' : 'Analyzing...';
+      setTimeout(() => {
+        getOpinionButton.removeAttribute('aria-busy');
+        getOpinionButton.textContent = original;
+        const customQuestion = textarea.value.trim();
+        if (customQuestion && customQuestion !== cases[activeCase].question[locale]) {
+          document.getElementById('shortAnswerBody').textContent = locale === 'ru'
+            ? 'вопрос принят как новый черновик кейса. Для точного ответа AI-CFO запросит недостающие цифры и сохранит расчетные предпосылки.'
+            : 'the question has been accepted as a new case draft. For a precise answer, AI-CFO will request missing numbers and save calculation assumptions.';
+          showToast(locale === 'ru' ? 'Черновик ответа обновлен' : 'Draft answer updated');
+        } else {
+          renderCase(activeCase, { keepQuestion: true });
+          showToast(locale === 'ru' ? 'Второе мнение обновлено' : 'Second opinion refreshed');
+        }
+      }, 650);
+    }
+
+    function toggleContextDrawer(force) {
+      const visible = force ?? !contextDrawer.classList.contains('visible');
+      contextDrawer.classList.toggle('visible', visible);
+      contextDrawer.setAttribute('aria-hidden', String(!visible));
     }
 
     function relayoutText() {
@@ -744,6 +1001,19 @@
     themeToggle.addEventListener('click', () => {
       root.dataset.theme = root.dataset.theme === 'dark' ? '' : 'dark';
     });
+    caseButtons.forEach((button) => {
+      button.addEventListener('click', () => renderCase(button.dataset.case));
+    });
+    getOpinionButton.addEventListener('click', simulateOpinion);
+    saveCaseButton.addEventListener('click', () => {
+      showToast(locale === 'ru' ? 'Кейс сохранен в историю решений' : 'Case saved to decision history');
+    });
+    openContextButton.addEventListener('click', () => toggleContextDrawer(true));
+    closeContextButton.addEventListener('click', () => toggleContextDrawer(false));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') toggleContextDrawer(false);
+    });
+    renderCase(activeCase);
   </script>
 </body>
 </html>
