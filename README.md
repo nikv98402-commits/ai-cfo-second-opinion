@@ -4,6 +4,8 @@ AI-CFO Second Opinion is a SaaS product concept for CEOs, COOs, owners, and othe
 
 The product focuses on Russian small and mid-sized companies around 0.5-5B RUB annual revenue, especially distribution, wholesale, e-commerce, retail, and B2B services.
 
+The product is bilingual from day one: Russian is the primary language, and English is a complete duplicate for every user-facing workflow, screen, report, prompt, answer, export, and support/error state.
+
 ## Core Idea
 
 Many companies at this stage already have real financial complexity: revenue growth, receivables, inventory, discounts, CAPEX, loans, cash gaps, and management reporting. But their finance function often still behaves like accounting plus Excel, not strategic finance.
@@ -27,6 +29,7 @@ The MVP is a SaaS app with:
 4. Decision case history.
 5. Finance-function roadmap.
 6. Architecture prepared for future 1C, bank, ERP, and marketplace integrations.
+7. Full Russian/English localization with Russian as the default language.
 
 ## Product Positioning
 

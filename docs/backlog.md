@@ -7,6 +7,7 @@
 3. Decide LLM provider and fallback model strategy.
 4. Decide uploaded-file retention and deletion policy.
 5. Decide whether MVP supports consultant multi-company accounts.
+6. Confirm bilingual product policy: Russian primary, English full duplicate.
 
 ## Epic 2: UX and Design
 
@@ -16,6 +17,7 @@
 4. Create responsive behavior for desktop, tablet, and mobile.
 5. Define accessibility checklist for keyboard navigation, ARIA landmarks, touch targets, and non-color risk indicators.
 6. Create visual design system for a restrained B2B finance product.
+7. Design language switcher placement and bilingual copy behavior for long labels and wrapped text.
 
 ## Epic 3: SaaS Foundation
 
@@ -70,3 +72,14 @@
 5. E2E tests for CEO discount question, COO liquidity question, and finance-function hiring recommendation.
 6. Accessibility tests for keyboard navigation and risk/confidence labels.
 7. Golden AI-answer dataset for 20 common finance cases.
+
+## Epic 9: Localization
+
+1. Implement localization infrastructure with `ru` as default and `en` as complete duplicate locale.
+2. Add user-level preferred locale and organization-level default locale.
+3. Move all user-facing UI strings into translation resources.
+4. Create Russian and English copy for navigation, onboarding, overview, chat, diagnostic, upload, cases, roadmap, settings, and all interaction states.
+5. Create localized AI answer templates, follow-up question templates, disclaimers, and prompt-library examples.
+6. Ensure AI answers are generated and saved in the active user locale.
+7. Add missing-key and hardcoded-string checks.
+8. Add Russian and English smoke tests for all MVP workflows.

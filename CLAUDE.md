@@ -12,3 +12,10 @@ In QA mode, flag any code that does not match `DESIGN.md`.
 This is an operational B2B finance product for CEOs, COOs, owners, and other non-financial C-level leaders.
 The product should feel calm, senior, precise, and useful under pressure.
 Do not build a marketing landing page as the primary experience.
+
+## Localization
+
+Russian is the primary/default product language.
+English is a complete duplicate locale, not a reduced secondary version.
+Do not hardcode user-facing strings in UI components, prompt templates, reports, exports, validation messages, or error states.
+Every MVP workflow must be implemented and QA-tested in both Russian and English.

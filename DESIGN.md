@@ -6,6 +6,7 @@
 - **Who it's for:** Executives in growing Russian companies around 0.5-5B RUB revenue, especially distribution, wholesale, e-commerce, retail, and B2B services.
 - **Space/industry:** B2B finance, executive decision support, financial maturity diagnostics, AI-assisted analysis.
 - **Project type:** Web application / dashboard / operational finance tool.
+- **Language model:** Russian is the primary/default product language; English is a complete duplicate locale across every workflow, state, report, prompt, and export.
 
 ## Aesthetic Direction
 
@@ -231,6 +232,20 @@ Requirements:
 
 ## Content Voice
 
+### Localization
+
+The design system must support full Russian and English parity from the first UI build.
+
+Rules:
+
+1. Every component state must have Russian and English copy before it is considered ready.
+2. Russian is the default locale; English must never lag as a partial or admin-only translation.
+3. Language switching belongs in user/account settings and can also appear in unauthenticated onboarding.
+4. UI layouts must tolerate English labels that are longer than Russian and Russian explanatory text that wraps across more lines.
+5. Do not mix languages inside the same sentence except for accepted finance abbreviations and aliases such as "BDR / P&L", "BDDS / Cash Flow", "DSO", "CAPEX", and "WACC".
+6. Risk labels, confidence labels, diagnostic stages, upload warnings, and AI answer headings need explicit translations, not generated ad hoc by the LLM.
+7. AI answer templates should preserve the same section order in both languages.
+
 Tone:
 
 - Calm.
@@ -316,3 +331,4 @@ Must show:
 | 2026-06-27 | Use Commissioner + IBM Plex Sans + IBM Plex Mono | Strong Cyrillic support, clear dashboard readability, and tabular finance values without overused default SaaS typography |
 | 2026-06-27 | Use restrained neutral palette with teal primary and semantic risk colors | Supports dense B2B finance workflows without generic AI SaaS purple/gradient patterns |
 | 2026-06-27 | Prefer chat-first progressive context | Users expect useful AI interaction quickly, while the product can collect structured diagnostic context over time |
+| 2026-06-27 | Make Russian primary and English a full duplicate locale | The target market is Russian-speaking, but the product and AI workflows must be ready for bilingual executives, investors, partners, and future expansion |

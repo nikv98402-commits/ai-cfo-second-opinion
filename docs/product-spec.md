@@ -42,6 +42,34 @@ The product must help the user:
 3. Assess company financial maturity and missing finance-function blocks.
 4. Learn financial reasoning in context, without feeling like they are taking a generic course.
 
+## Language Strategy
+
+The product must be fully bilingual from the first implementation pass.
+
+Language priority:
+
+1. Russian is the primary product language and default locale.
+2. English is the duplicate locale and must cover the same product surface, not a reduced or marketing-only version.
+
+Scope of bilingual coverage:
+
+1. Navigation, screen titles, buttons, labels, empty states, loading states, validation messages, errors, tooltips, settings, and help text.
+2. Financial maturity questionnaire questions, answer options, scoring explanations, maturity stages, and roadmap recommendations.
+3. AI second-opinion chat prompts, follow-up questions, answer sections, confidence explanations, disclaimers, and suggested next actions.
+4. Upload mapping flow, report-type names, column-mapping hints, parse warnings, and recoverable error messages.
+5. Diagnostic reports, decision case history, exports, notifications, and audit-visible user-facing event descriptions.
+6. System-generated examples, prompt library items, and onboarding copy.
+
+Implementation requirements:
+
+1. No user-facing string may be hardcoded directly in UI components or prompt templates without a localization key.
+2. Translation resources must support `ru` and `en` from the start; `ru` is default fallback, `en` must be complete before release.
+3. Store user and organization locale preferences separately. Organization default may be Russian while individual users can switch to English.
+4. AI answers must be generated in the active user locale unless the user explicitly requests another language in the case.
+5. Financial terms should preserve executive clarity: Russian copy may include English abbreviations where common, such as "BDR / P&L", "BDDS / Cash Flow", "DSO", "CAPEX", "WACC"; English copy should preserve Russian report aliases when useful for Russian source documents, such as "P&L / BDR".
+6. Imported source documents are not translated automatically. The product should map and explain them in the active UI language while preserving original file names, sheet names, and column names.
+7. Localization QA is part of MVP acceptance: every shipped flow must pass both Russian and English smoke tests.
+
 ## Product Positioning
 
 Working positioning:
@@ -68,6 +96,7 @@ Avoid positioning the MVP as:
 6. Diagnostic report: maturity stage, risk map, missing finance-function blocks, and recommended next actions.
 7. Case history: each user question becomes a structured decision case.
 8. Integration-ready architecture with internal interfaces for future connectors.
+9. Full Russian and English localization across the complete MVP surface.
 
 ### Out of Scope for MVP
 
@@ -471,6 +500,7 @@ The MVP should be architected as a modular SaaS with these domains:
 | AI cases | Chat questions, context, answers, confidence, and decision history |
 | Diagnostics | Maturity scoring and risk reports |
 | Integrations | Future connector boundary for 1C, banks, ERP, marketplaces |
+| Localization | Locale preferences, translation resources, bilingual UI/report/prompt coverage |
 | Audit/security | Logs, permissions, data retention |
 
 Recommended MVP architecture:
@@ -485,6 +515,7 @@ Web App
      -> Financial Metrics Service
      -> AI Case Service
      -> Diagnostic Report Service
+     -> Localization Service
      -> Audit Log Service
 
 API Backend
@@ -545,13 +576,14 @@ User signup
 
 ```text
 User asks question
+  -> resolve user locale
   -> classify case type
   -> retrieve company profile, maturity stage, available metrics, uploaded context
   -> check whether required context is sufficient
   -> if insufficient: ask follow-up questions
   -> if sufficient: produce structured answer JSON
   -> validate answer schema and guardrails
-  -> save AiCase and AiAnswer
+  -> save AiCase and AiAnswer with answer locale
   -> show answer plus confidence and disclaimer
 ```
 
@@ -681,6 +713,7 @@ Operational requirements:
 | email | string |
 | name | string |
 | role | enum |
+| preferred_locale | enum: ru, en |
 | created_at | datetime |
 
 ### Organization
@@ -692,6 +725,7 @@ Operational requirements:
 | industry | enum |
 | revenue_band | enum |
 | employee_count_band | enum |
+| default_locale | enum: ru, en |
 | created_at | datetime |
 
 ### OrganizationMember
@@ -763,6 +797,7 @@ Operational requirements:
 | id | uuid |
 | ai_case_id | uuid |
 | answer_json | json |
+| locale | enum: ru, en |
 | model | string |
 | prompt_template_id | uuid |
 | prompt_version | string |
@@ -848,6 +883,11 @@ Operational requirements:
 18. Every major feature has loading, empty, error, success, and partial states.
 19. Mobile navigation exposes Overview, Ask, Cases, and Uploads without requiring desktop-only layout.
 20. Risk and confidence indicators include text labels and do not rely on color alone.
+21. Russian is the default locale and every MVP workflow is available in Russian.
+22. English duplicates every user-facing MVP workflow with no missing navigation, form, report, chat, export, empty, loading, validation, or error text.
+23. Users can switch their personal locale between Russian and English without changing organization data.
+24. AI follow-up questions and structured answers are generated in the active user locale and saved with locale metadata.
+25. Localization checks fail the build or release checklist when user-facing strings are missing in either Russian or English.
 
 ## Testing Plan
 
@@ -872,6 +912,9 @@ Operational requirements:
 | E2E | Mobile user opens case, reads context, and submits follow-up | +1 |
 | Accessibility | Keyboard navigation across app shell, chat, upload mapping, questionnaire | +5 |
 | Accessibility | Risk/confidence labels pass contrast and non-color requirements | +4 |
+| Localization | Russian and English smoke tests for onboarding, overview, chat, diagnostic, upload, cases, settings | +12 |
+| Localization | Missing-key and hardcoded user-facing string checks | +6 |
+| Localization | AI answer locale contract tests for Russian and English outputs | +6 |
 | Evaluation | Golden AI-answer dataset for 20 common finance cases | +20 |
 
 ## Example AI Answer Contract
@@ -921,12 +964,13 @@ Expected behavior:
 | Excel/CSV upload and manual mapping | 5-8 days |
 | Diagnostic report | 4-6 days |
 | Case history UI | 2-4 days |
+| Full Russian/English localization, localized prompt variants, and locale QA | 4-7 days |
 | Testing and security hardening | 5-8 days |
 | Design system and responsive UI states | 5-8 days |
 
 Total MVP engineering estimate: roughly 6-10 weeks for a small team after design decisions are finalized.
 
-Engineering review adjustment: with secure multi-tenancy, LLM Gateway, deterministic calculators, async import, and AI evaluation included, a realistic MVP is closer to 8-12 weeks for a small team. A 6-week build is possible only if UI polish, PDF export, and advanced upload handling are deferred.
+Engineering review adjustment: with secure multi-tenancy, LLM Gateway, deterministic calculators, async import, AI evaluation, and full Russian/English localization included, a realistic MVP is closer to 9-13 weeks for a small team. A 6-week build is possible only if UI polish, PDF export, advanced upload handling, and full localization QA are deferred.
 
 Design review adjustment: with a proper app shell, first-session flows, upload mapping states, mobile behavior, accessibility, and a non-generic B2B visual system, design and frontend scope should not be treated as incidental. If the team wants a shippable executive-grade product, reserve at least 2-3 dedicated weeks for UX/UI design, component states, and responsive QA inside the broader MVP timeline.
 
@@ -957,9 +1001,14 @@ Because MVP starts without live integrations, rollback is straightforward:
 6. Initial LLM provider and fallback model strategy.
 7. Whether uploaded originals are retained by default or deleted after parsing.
 8. Whether first release supports multi-company users such as consultants, or only one organization per account.
-9. Whether product copy should use Russian finance terms only or dual Russian/English terms such as BDR/P&L and BDDS/Cash Flow.
-10. Whether the initial default path is chat-first with progressive context or diagnostic-first with structured onboarding. Design review recommends chat-first.
-11. Whether PDF/report export is hidden until after diagnostic completion or visible as a disabled future action.
+9. Whether the initial default path is chat-first with progressive context or diagnostic-first with structured onboarding. Design review recommends chat-first.
+10. Whether PDF/report export is hidden until after diagnostic completion or visible as a disabled future action.
+
+## Product Decisions Made
+
+1. Russian is the primary/default language.
+2. English is a complete duplicate language across the whole product, including UI, AI answers, diagnostics, uploads, reports, exports, states, errors, and settings.
+3. Finance terminology should be bilingual where it improves clarity: Russian UI may show familiar English abbreviations, and English UI may preserve Russian report aliases used in source documents.
 
 ## Recommended Next Issues
 
@@ -975,6 +1024,7 @@ Because MVP starts without live integrations, rollback is straightforward:
 10. Create wireframes for Overview, Ask AI-CFO, Diagnostic, Uploads, Decision Cases, and mobile navigation.
 11. Define UI component states for forms, upload mapping, AI answer blocks, risk labels, confidence labels, and case table.
 12. Build responsive app shell and accessibility checklist before high-fidelity UI.
+13. Implement localization infrastructure and complete Russian/English translation coverage before feature handoff.
 
 ## Engineering Review Report
 
@@ -987,7 +1037,7 @@ Because MVP starts without live integrations, rollback is straightforward:
 | Performance/Ops | CLEAR WITH UPDATES | Added background workers, retry policy, rate limits, error tracking, and AI/upload observability |
 | Tests | CLEAR WITH UPDATES | Expanded unit, integration, E2E, and AI evaluation coverage |
 
-Verdict: Engineering plan is ready for implementation as a greenfield MVP spec after the updates above. No blocking architecture gaps remain, but pricing, first-chat onboarding behavior, LLM provider strategy, uploaded-file retention, consultant multi-company support, and terminology strategy remain product decisions before final build planning.
+Verdict: Engineering plan is ready for implementation as a greenfield MVP spec after the updates above. No blocking architecture gaps remain, but pricing, first-chat onboarding behavior, LLM provider strategy, uploaded-file retention, consultant multi-company support, and PDF/report export behavior remain product decisions before final build planning.
 
 ## Design Review Report
 

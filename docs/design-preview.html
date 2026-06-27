@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -434,80 +434,81 @@
       <div class="top-actions">
         <span class="chip">ООО Северная Дистрибуция</span>
         <span class="chip">Q2 2026</span>
-        <span class="status">Data freshness: medium</span>
-        <button id="themeToggle">Toggle theme</button>
+        <span class="status" data-i18n="freshness">Свежесть данных: средняя</span>
+        <button id="localeToggle" aria-label="Switch language">EN</button>
+        <button id="themeToggle" data-i18n="theme">Тема</button>
       </div>
     </header>
 
-    <nav class="sidebar" aria-label="Main navigation">
-      <div class="nav-title">Workspace</div>
-      <div class="nav-item active"><span>Overview</span><span>8</span></div>
-      <div class="nav-item"><span>Ask AI-CFO</span><span></span></div>
-      <div class="nav-item"><span>Diagnostics</span><span>62%</span></div>
-      <div class="nav-item"><span>Uploads</span><span>3</span></div>
-      <div class="nav-item"><span>Cases</span><span>12</span></div>
-      <div class="nav-title">Control</div>
-      <div class="nav-item"><span>Roadmap</span><span></span></div>
-      <div class="nav-item"><span>Settings</span><span></span></div>
+    <nav class="sidebar" aria-label="Основная навигация">
+      <div class="nav-title" data-i18n="workspace">Рабочая область</div>
+      <div class="nav-item active"><span data-i18n="overview">Обзор</span><span>8</span></div>
+      <div class="nav-item"><span data-i18n="ask">Спросить AI-CFO</span><span></span></div>
+      <div class="nav-item"><span data-i18n="diagnostics">Диагностика</span><span>62%</span></div>
+      <div class="nav-item"><span data-i18n="uploads">Загрузки</span><span>3</span></div>
+      <div class="nav-item"><span data-i18n="cases">Кейсы</span><span>12</span></div>
+      <div class="nav-title" data-i18n="control">Управление</div>
+      <div class="nav-item"><span data-i18n="roadmap">Дорожная карта</span><span></span></div>
+      <div class="nav-item"><span data-i18n="settings">Настройки</span><span></span></div>
     </nav>
 
     <main>
       <section class="page-head">
         <div>
-          <h1>Executive risk cockpit</h1>
-          <p>Check decisions, missing data, and finance-function gaps before approving the next move.</p>
+          <h1 data-i18n="heroTitle">Пульт финансовых рисков</h1>
+          <p data-i18n="heroText">Проверяйте решения, недостающие данные и пробелы финфункции до согласования следующего шага.</p>
         </div>
-        <button class="primary">Ask about a decision</button>
+        <button class="primary" data-i18n="askDecision">Разобрать решение</button>
       </section>
 
       <section class="grid">
         <div class="panel">
           <div class="panel-head">
-            <h2>Next best action</h2>
-            <span class="label info">Info · improves confidence</span>
+            <h2 data-i18n="nextAction">Следующий лучший шаг</h2>
+            <span class="label info" data-i18n="infoConfidence">Инфо · повышает уверенность</span>
           </div>
           <div class="panel-body">
-            <p>Upload receivables aging to improve liquidity and discount-risk answers. Current cash-flow confidence is medium because DSO is estimated from quarterly data.</p>
+            <p data-i18n="nextActionText">Загрузите aging дебиторской задолженности, чтобы точнее оценивать ликвидность и риски скидок. Сейчас уверенность по cash flow средняя, потому что DSO оценен по квартальным данным.</p>
             <div class="three">
-              <div class="metric">Maturity stage<strong>Stage 2</strong></div>
-              <div class="metric">Open cases<strong>12</strong></div>
-              <div class="metric">High risks<strong>3</strong></div>
+              <div class="metric"><span data-i18n="maturityStage">Стадия зрелости</span><strong data-i18n="stage2">Стадия 2</strong></div>
+              <div class="metric"><span data-i18n="openCases">Открытые кейсы</span><strong>12</strong></div>
+              <div class="metric"><span data-i18n="highRisks">Высокие риски</span><strong>3</strong></div>
             </div>
           </div>
           <div class="answer-section">
-            <h3>AI-CFO answer preview</h3>
-            <p><strong>Short answer:</strong> a 12% discount is not safe to approve until contribution margin and receivables impact are checked.</p>
+            <h3 data-i18n="answerPreview">Превью ответа AI-CFO</h3>
+            <p><strong data-i18n="shortAnswer">Короткий ответ:</strong> <span data-i18n="shortAnswerText">скидку 12% нельзя безопасно согласовать, пока не проверены маржинальность вклада и влияние на дебиторку.</span></p>
           </div>
           <div class="answer-section">
-            <h3>P&L / Cash Flow / Balance Sheet logic</h3>
+            <h3 data-i18n="logic">Логика BDR / Cash Flow / Баланса</h3>
             <div class="three">
-              <div class="metric">P&L<br><strong>-4.8 pp</strong><span>gross margin pressure</span></div>
-              <div class="metric">Cash flow<br><strong>+18 days</strong><span>estimated DSO drag</span></div>
-              <div class="metric">Balance<br><strong>inventory</strong><span>needs turnover check</span></div>
+              <div class="metric"><span data-i18n="pnl">BDR / P&L</span><br><strong>-4.8 pp</strong><span data-i18n="marginPressure">давление на gross margin</span></div>
+              <div class="metric"><span data-i18n="cashFlow">Cash flow</span><br><strong>+18 days</strong><span data-i18n="dsoDrag">оценочный DSO drag</span></div>
+              <div class="metric"><span data-i18n="balance">Баланс</span><br><strong data-i18n="inventory">запасы</strong><span data-i18n="turnoverCheck">нужна проверка оборачиваемости</span></div>
             </div>
           </div>
         </div>
 
         <div class="panel">
           <div class="panel-head">
-            <h2>Top risks</h2>
-            <span class="chip">Updated today</span>
+            <h2 data-i18n="topRisks">Ключевые риски</h2>
+            <span class="chip" data-i18n="updatedToday">Обновлено сегодня</span>
           </div>
           <div class="panel-body risk-list">
             <div class="risk">
-              <span class="label high">High risk</span>
-              <span>Receivables growing faster than revenue</span>
+              <span class="label high" data-i18n="highRisk">Высокий риск</span>
+              <span data-i18n="riskReceivables">Дебиторка растет быстрее выручки</span>
               <span class="mono">DSO ?</span>
             </div>
             <div class="risk">
-              <span class="label medium">Medium</span>
-              <span>Discount proposal lacks break-even volume model</span>
+              <span class="label medium" data-i18n="mediumRisk">Средний</span>
+              <span data-i18n="riskDiscount">По скидке нет модели break-even объема</span>
               <span class="mono">12%</span>
             </div>
             <div class="risk">
-              <span class="label low">Low risk</span>
-              <span>Budgeting process exists but variance analysis is incomplete</span>
-              <span class="mono">Stage 2</span>
+              <span class="label low" data-i18n="lowRisk">Низкий риск</span>
+              <span data-i18n="riskBudget">Бюджетирование есть, но variance analysis неполный</span>
+              <span class="mono" data-i18n="stage2">Стадия 2</span>
             </div>
           </div>
         </div>
@@ -515,39 +516,39 @@
 
       <section class="panel" style="margin-top:16px">
         <div class="panel-head">
-          <h2>Decision cases</h2>
-          <button>Filter</button>
+          <h2 data-i18n="decisionCases">Кейсы решений</h2>
+          <button data-i18n="filter">Фильтр</button>
         </div>
         <table>
           <thead>
             <tr>
-              <th>Case</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Confidence</th>
-              <th>Updated</th>
+              <th data-i18n="case">Кейс</th>
+              <th data-i18n="type">Тип</th>
+              <th data-i18n="status">Статус</th>
+              <th data-i18n="confidence">Уверенность</th>
+              <th data-i18n="updated">Обновлено</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>12% discount for marketplace growth</td>
-              <td>Pricing</td>
-              <td><span class="label high">Needs data</span></td>
-              <td>Medium</td>
+              <td data-i18n="caseDiscount">Скидка 12% для роста на маркетплейсе</td>
+              <td data-i18n="pricing">Ценообразование</td>
+              <td><span class="label high" data-i18n="needsData">Нужны данные</span></td>
+              <td data-i18n="mediumConfidence">Средняя</td>
               <td class="num">27.06</td>
             </tr>
             <tr>
-              <td>Profit exists, cash is tight</td>
-              <td>Liquidity</td>
-              <td><span class="label medium">Open</span></td>
-              <td>Low</td>
+              <td data-i18n="caseCash">Прибыль есть, денег мало</td>
+              <td data-i18n="liquidity">Ликвидность</td>
+              <td><span class="label medium" data-i18n="open">Открыт</span></td>
+              <td data-i18n="lowConfidence">Низкая</td>
               <td class="num">26.06</td>
             </tr>
             <tr>
-              <td>Hire CFO or build treasury first</td>
-              <td>Hiring</td>
-              <td><span class="label low">Answered</span></td>
-              <td>High</td>
+              <td data-i18n="caseHire">Нанять CFO или сначала строить казначейство</td>
+              <td data-i18n="hiring">Найм</td>
+              <td><span class="label low" data-i18n="answered">Отвечен</span></td>
+              <td data-i18n="highConfidence">Высокая</td>
               <td class="num">24.06</td>
             </tr>
           </tbody>
@@ -556,11 +557,11 @@
 
       <section class="panel" style="margin-top:16px">
         <div class="panel-head">
-          <h2>Palette and component sample</h2>
-          <button class="primary">Primary action</button>
+          <h2 data-i18n="paletteTitle">Палитра и компоненты</h2>
+          <button class="primary" data-i18n="primaryAction">Главное действие</button>
         </div>
         <div class="panel-body">
-          <p>Restrained neutral base, teal action, semantic risk colors, and tabular financial values.</p>
+          <p data-i18n="paletteText">Сдержанная нейтральная база, teal-действие, семантические цвета риска и табличные финансовые значения.</p>
           <div class="palette">
             <div class="swatch" style="background:#17201f;color:#fff">ink-900<br>#17201F</div>
             <div class="swatch" style="background:#fcfcfa;color:#17201f">paper-000<br>#FCFCFA</div>
@@ -573,21 +574,21 @@
       </section>
     </main>
 
-    <aside class="rail" aria-label="Company context">
+    <aside class="rail" aria-label="Контекст компании">
       <div class="rail-block">
-        <h3>Company baseline</h3>
-        <p>Distribution / wholesale<br><span class="mono">1-3B RUB revenue</span></p>
+        <h3 data-i18n="companyBaseline">База компании</h3>
+        <p><span data-i18n="industry">Дистрибуция / опт</span><br><span class="mono" data-i18n="revenue">1-3B RUB выручка</span></p>
       </div>
       <div class="rail-block">
-        <h3>Maturity stage</h3>
-        <span class="label medium">Stage 2 · medium confidence</span>
+        <h3 data-i18n="maturityStage">Стадия зрелости</h3>
+        <span class="label medium" data-i18n="stageConfidence">Стадия 2 · средняя уверенность</span>
       </div>
       <div class="rail-block">
-        <h3>Missing data</h3>
-        <p>Receivables aging, inventory turnover, payment calendar.</p>
+        <h3 data-i18n="missingData">Недостающие данные</h3>
+        <p data-i18n="missingDataText">Aging дебиторки, оборачиваемость запасов, платежный календарь.</p>
       </div>
       <div class="rail-block">
-        <h3>Source documents</h3>
+        <h3 data-i18n="sourceDocs">Исходные документы</h3>
         <p class="mono">BDR_Q2.xlsx<br>CashFlow_June.csv<br>Inventory_Q2.xlsx</p>
       </div>
     </aside>
@@ -595,6 +596,39 @@
 
   <script>
     const root = document.documentElement;
+    const copy = {
+      ru: {
+        freshness: 'Свежесть данных: средняя', theme: 'Тема', workspace: 'Рабочая область', overview: 'Обзор', ask: 'Спросить AI-CFO', diagnostics: 'Диагностика', uploads: 'Загрузки', cases: 'Кейсы', control: 'Управление', roadmap: 'Дорожная карта', settings: 'Настройки',
+        heroTitle: 'Пульт финансовых рисков', heroText: 'Проверяйте решения, недостающие данные и пробелы финфункции до согласования следующего шага.', askDecision: 'Разобрать решение',
+        nextAction: 'Следующий лучший шаг', infoConfidence: 'Инфо · повышает уверенность', nextActionText: 'Загрузите aging дебиторской задолженности, чтобы точнее оценивать ликвидность и риски скидок. Сейчас уверенность по cash flow средняя, потому что DSO оценен по квартальным данным.',
+        maturityStage: 'Стадия зрелости', stage2: 'Стадия 2', openCases: 'Открытые кейсы', highRisks: 'Высокие риски', answerPreview: 'Превью ответа AI-CFO', shortAnswer: 'Короткий ответ:', shortAnswerText: 'скидку 12% нельзя безопасно согласовать, пока не проверены маржинальность вклада и влияние на дебиторку.',
+        logic: 'Логика BDR / Cash Flow / Баланса', pnl: 'BDR / P&L', marginPressure: 'давление на gross margin', cashFlow: 'Cash flow', dsoDrag: 'оценочный DSO drag', balance: 'Баланс', inventory: 'запасы', turnoverCheck: 'нужна проверка оборачиваемости',
+        topRisks: 'Ключевые риски', updatedToday: 'Обновлено сегодня', highRisk: 'Высокий риск', riskReceivables: 'Дебиторка растет быстрее выручки', mediumRisk: 'Средний', riskDiscount: 'По скидке нет модели break-even объема', lowRisk: 'Низкий риск', riskBudget: 'Бюджетирование есть, но variance analysis неполный',
+        decisionCases: 'Кейсы решений', filter: 'Фильтр', case: 'Кейс', type: 'Тип', status: 'Статус', confidence: 'Уверенность', updated: 'Обновлено', caseDiscount: 'Скидка 12% для роста на маркетплейсе', pricing: 'Ценообразование', needsData: 'Нужны данные', mediumConfidence: 'Средняя', caseCash: 'Прибыль есть, денег мало', liquidity: 'Ликвидность', open: 'Открыт', lowConfidence: 'Низкая', caseHire: 'Нанять CFO или сначала строить казначейство', hiring: 'Найм', answered: 'Отвечен', highConfidence: 'Высокая',
+        paletteTitle: 'Палитра и компоненты', primaryAction: 'Главное действие', paletteText: 'Сдержанная нейтральная база, teal-действие, семантические цвета риска и табличные финансовые значения.', companyBaseline: 'База компании', industry: 'Дистрибуция / опт', revenue: '1-3B RUB выручка', stageConfidence: 'Стадия 2 · средняя уверенность', missingData: 'Недостающие данные', missingDataText: 'Aging дебиторки, оборачиваемость запасов, платежный календарь.', sourceDocs: 'Исходные документы'
+      },
+      en: {
+        freshness: 'Data freshness: medium', theme: 'Theme', workspace: 'Workspace', overview: 'Overview', ask: 'Ask AI-CFO', diagnostics: 'Diagnostics', uploads: 'Uploads', cases: 'Cases', control: 'Control', roadmap: 'Roadmap', settings: 'Settings',
+        heroTitle: 'Executive risk cockpit', heroText: 'Check decisions, missing data, and finance-function gaps before approving the next move.', askDecision: 'Ask about a decision',
+        nextAction: 'Next best action', infoConfidence: 'Info · improves confidence', nextActionText: 'Upload receivables aging to improve liquidity and discount-risk answers. Current cash-flow confidence is medium because DSO is estimated from quarterly data.',
+        maturityStage: 'Maturity stage', stage2: 'Stage 2', openCases: 'Open cases', highRisks: 'High risks', answerPreview: 'AI-CFO answer preview', shortAnswer: 'Short answer:', shortAnswerText: 'a 12% discount is not safe to approve until contribution margin and receivables impact are checked.',
+        logic: 'P&L / Cash Flow / Balance Sheet logic', pnl: 'P&L', marginPressure: 'gross margin pressure', cashFlow: 'Cash flow', dsoDrag: 'estimated DSO drag', balance: 'Balance', inventory: 'inventory', turnoverCheck: 'needs turnover check',
+        topRisks: 'Top risks', updatedToday: 'Updated today', highRisk: 'High risk', riskReceivables: 'Receivables growing faster than revenue', mediumRisk: 'Medium', riskDiscount: 'Discount proposal lacks break-even volume model', lowRisk: 'Low risk', riskBudget: 'Budgeting process exists but variance analysis is incomplete',
+        decisionCases: 'Decision cases', filter: 'Filter', case: 'Case', type: 'Type', status: 'Status', confidence: 'Confidence', updated: 'Updated', caseDiscount: '12% discount for marketplace growth', pricing: 'Pricing', needsData: 'Needs data', mediumConfidence: 'Medium', caseCash: 'Profit exists, cash is tight', liquidity: 'Liquidity', open: 'Open', lowConfidence: 'Low', caseHire: 'Hire CFO or build treasury first', hiring: 'Hiring', answered: 'Answered', highConfidence: 'High',
+        paletteTitle: 'Palette and component sample', primaryAction: 'Primary action', paletteText: 'Restrained neutral base, teal action, semantic risk colors, and tabular financial values.', companyBaseline: 'Company baseline', industry: 'Distribution / wholesale', revenue: '1-3B RUB revenue', stageConfidence: 'Stage 2 · medium confidence', missingData: 'Missing data', missingDataText: 'Receivables aging, inventory turnover, payment calendar.', sourceDocs: 'Source documents'
+      }
+    };
+    let locale = 'ru';
+    const localeToggle = document.getElementById('localeToggle');
+    const applyLocale = (nextLocale) => {
+      locale = nextLocale;
+      document.documentElement.lang = locale;
+      document.querySelectorAll('[data-i18n]').forEach((node) => {
+        node.textContent = copy[locale][node.dataset.i18n];
+      });
+      localeToggle.textContent = locale === 'ru' ? 'EN' : 'RU';
+    };
+    localeToggle.addEventListener('click', () => applyLocale(locale === 'ru' ? 'en' : 'ru'));
     document.getElementById('themeToggle').addEventListener('click', () => {
       root.dataset.theme = root.dataset.theme === 'dark' ? '' : 'dark';
     });
