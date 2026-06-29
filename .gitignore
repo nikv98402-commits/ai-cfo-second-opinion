@@ -6,6 +6,8 @@ outputs/
 .env
 .env.*
 node_modules/
+.next/
+tsconfig.tsbuildinfo
 dist/
 build/
 .DS_Store

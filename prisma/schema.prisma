@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Case {
+  id                 String   @id @default(cuid())
+  companyName        String
+  industry           String
+  annualRevenue      Float
+  employeesCount     Int
+  legalEntitiesCount Int
+  hasDebt            Boolean
+  hasCapexPlan       Boolean
+  financeOwner       String
+  reportsAvailable   Json
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  financialInputs FinancialInput[]
+  analysisResults AnalysisResult[]
+}
+
+model FinancialInput {
+  id                  String   @id @default(cuid())
+  caseId              String
+  case                Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  periodName          String
+  revenue             Float
+  cogs                Float
+  grossProfit         Float
+  commercialExpenses  Float
+  adminExpenses       Float
+  payroll             Float
+  rent                Float
+  ebitda              Float
+  depreciation        Float
+  ebit                Float
+  interestExpense     Float
+  netProfit           Float
+  operatingCashFlow   Float
+  capex               Float
+  financingCashFlow   Float
+  debtRepayment       Float
+  newDebt             Float
+  cashStart           Float
+  cashEnd             Float
+  cash                Float
+  accountsReceivable  Float
+  inventory           Float
+  fixedAssets         Float
+  accountsPayable     Float
+  shortTermDebt       Float
+  longTermDebt        Float
+  equity              Float
+  avgDebtRate         Float?
+  wacc                Float?
+  expectedCapexRoi    Float?
+  dso                 Float?
+  dio                 Float?
+  dpo                 Float?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model AnalysisResult {
+  id                     String   @id @default(cuid())
+  caseId                 String
+  case                   Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  riskScore              Int
+  riskLevel              String
+  executiveSummary       String
+  metrics                Json
+  redFlags               Json
+  liquidityRisks         Json
+  operatingLeverageRisks Json
+  capexRisks             Json
+  debtRisks              Json
+  workingCapitalRisks    Json
+  financeMaturity        Json
+  hiringRecommendation   Json
+  questionsToFinanceTeam Json
+  ownerEducationBlock    String
+  nextActions            Json
+  markdownReport         String
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}

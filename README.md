@@ -19,17 +19,48 @@ The product helps a non-financial executive answer questions like:
 - Are receivables growing into a liquidity risk?
 - Is our finance team building the right reporting and control system?
 
-## MVP
+## Working MVP Prototype
 
-The MVP is a SaaS app with:
+This repository now contains a working Next.js prototype, not only a static showcase. The current app runs in `MOCK_AI=true` mode and uses deterministic rule-based analysis, so it works without an OpenAI API key.
 
-1. AI second-opinion chat for management decisions.
-2. Financial maturity diagnostic.
-3. Excel/CSV upload with manual mapping.
-4. Decision case history.
-5. Finance-function roadmap.
-6. Architecture prepared for future 1C, bank, ERP, and marketplace integrations.
-7. Full Russian/English localization with Russian as the default language.
+Current prototype scope:
+
+1. Executive dashboard with a sample case.
+2. Case creation flow.
+3. Upload/mapping page with an Excel template.
+4. Automatic finance analysis for liquidity, margin, CAPEX, debt, working capital, operating leverage, and finance maturity.
+5. Owner-friendly report with red flags, questions for the finance team, maturity score, hiring recommendation, and Markdown export.
+6. Prisma data model prepared for persisted cases, inputs, and analysis results.
+7. Architecture prepared for future 1C, bank, ERP, marketplace, and AI-provider integrations.
+8. Full Russian/English duplication is a product requirement; Russian is the default language.
+
+## Run Locally
+
+```bash
+npm install
+npm run dev -- -p 4190 -H 127.0.0.1
+```
+
+Open [http://127.0.0.1:4190](http://127.0.0.1:4190).
+
+Useful routes:
+
+- `/` - dashboard
+- `/cases/new` - create a case
+- `/cases/north-distribution-q2/upload` - upload and mapping workflow
+- `/cases/north-distribution-q2/analyze` - rule-based analysis
+- `/cases/north-distribution-q2/report` - executive report and Markdown export
+
+Sample upload template:
+
+- `public/templates/financial_case_template.xlsx`
+
+## Quality Checks
+
+```bash
+npm run typecheck
+npm run build
+```
 
 ## Product Positioning
 
@@ -45,4 +76,4 @@ AI-CFO second opinion for CEOs and COOs of growing companies: check financial de
 
 ## Status
 
-Early product planning. CEO review, engineering review, and design review have been folded into the product spec.
+Working MVP scaffold. The next product step is wiring persisted case creation/upload parsing into the Prisma model, then adding the bilingual content catalog and the first real second-opinion chat flow.
