@@ -17,12 +17,36 @@ export default function DashboardPage() {
 
   return (
     <>
-      <section className="page-head">
-        <div>
-          <h1>Платные финансовые разборы</h1>
-          <p>Owner-side assurance pipeline: data pack, качество данных, evidence trail, expert review и закрытый brief собственника.</p>
+      <section className="product-head">
+        <div className="product-title">
+          <span className="label info">Founder Financial Second Opinion</span>
+          <h1>AI-CFO для собственника, который хочет проверить финансовое решение до ошибки</h1>
+          <p>
+            Диалоговый second opinion, data pack, deterministic finance engine, evidence trail и экспертная проверка в одном закрытом workspace.
+          </p>
         </div>
-        <Link className="button primary" href="/cases/new">Начать разбор 150k</Link>
+        <div className="product-actions">
+          <div className="locale-switch" aria-label="Language status">
+            <strong>RU</strong>
+            <span>EN mirror ready</span>
+          </div>
+          <Link className="button primary" href="/cases/new">Начать разбор 150k</Link>
+        </div>
+      </section>
+
+      <section className="assurance-strip">
+        <div>
+          <span>Первый платный результат</span>
+          <strong>Закрытый brief собственника за 7-14 дней</strong>
+        </div>
+        <div>
+          <span>Ключевой сценарий</span>
+          <strong>Проверить скидку, CAPEX, cash gap или найм финансиста</strong>
+        </div>
+        <div>
+          <span>Trust boundary</span>
+          <strong>LLM объясняет, finance engine считает, эксперт подтверждает</strong>
+        </div>
       </section>
 
       <section className="dashboard-shell">
@@ -52,16 +76,23 @@ export default function DashboardPage() {
         <section className="grid diagnostic-layout">
           <aside className="panel">
             <div className="panel-head">
-              <h2>Платные разборы</h2>
+              <h2>Revenue pipeline</h2>
               <span className="label info">first revenue</span>
             </div>
             <div className="panel-body stack">
               {diagnosticProjects.map((item) => (
                 <Link className="stage-card" href={`/cases/${item.id === activeProject.id ? activeProject.id : "north-distribution-q2"}/report`} key={item.id}>
-                  <span className="label info">{statusLabel[item.status]}</span>
+                  <div className="stage-card-top">
+                    <span className="label info">{statusLabel[item.status]}</span>
+                    <span className="mono">{(item.priceRub / 1_000).toFixed(0)}k</span>
+                  </div>
                   <strong>{item.companyName}</strong>
-                  <span className="muted">{item.offer} · {(item.priceRub / 1_000).toFixed(0)}k RUB</span>
+                  <span className="muted">{item.offer}</span>
                   <span>{item.nextAction}</span>
+                  <div className="confidence-line">
+                    <span>confidence {item.confidence}%</span>
+                    <span>{item.dueDate}</span>
+                  </div>
                 </Link>
               ))}
             </div>
@@ -77,6 +108,11 @@ export default function DashboardPage() {
                   <p>{activeProject.companyName} · confidence {activeProject.confidence}% · доступно 48 часов</p>
                 </div>
                 <Link className="button primary" href={`/cases/${activeProject.id}/report`}>Открыть brief</Link>
+              </div>
+              <div className="brief-verdict">
+                <span className="label medium">Executive verdict</span>
+                <strong>Не продолжать скидку 12% без проверки contribution margin и 13-недельного cash bridge.</strong>
+                <p>Риск в деньгах: {formatRub(activeProject.riskMoneyRub)}. Вывод можно использовать с оговорками: не хватает aging ДЗ и сверки банк-клиент.</p>
               </div>
               <div className="panel-body grid three">
                 <div className="metric"><span>Деньги под риском</span><strong>{formatRub(activeProject.riskMoneyRub)}</strong></div>
@@ -117,7 +153,7 @@ export default function DashboardPage() {
               </article>
 
               <aside className="panel expert-panel">
-                <div className="panel-head"><h2>AI + Expert Review</h2><span className="label medium">Pilot lesson</span></div>
+                <div className="panel-head"><h2>Платный контур</h2><span className="label medium">AI + expert</span></div>
                 <div className="panel-body stack">
                   <p>AI готовит draft, эксперт подключается только к конфликтам данных, необратимым решениям и существенному финансовому эффекту.</p>
                   {paidOffers.map((offer) => (
@@ -135,6 +171,13 @@ export default function DashboardPage() {
           <aside className="panel">
             <div className="panel-head"><h2>Data pack</h2><span className="label info">{receivedCount}/{dataPack.length}</span></div>
             <div className="panel-body stack">
+              <div className="readiness-meter">
+                <div>
+                  <strong>{activeProject.dataQuality}/100</strong>
+                  <span>Можно использовать с оговорками</span>
+                </div>
+                <div className="meter-track"><span style={{ width: `${activeProject.dataQuality}%` }} /></div>
+              </div>
               {dataPack.map((item) => (
                 <div className={`data-row ${item.status}`} key={item.name}>
                   <strong>{item.name}</strong>
@@ -145,6 +188,22 @@ export default function DashboardPage() {
               <Link className="button" href={`/cases/${activeProject.id}/upload`}>Открыть data pack</Link>
             </div>
           </aside>
+        </section>
+
+        <section className="operating-model">
+          {[
+            ["01", "Data pack", "Анкета, Excel, БДР, БДДС, баланс, debt schedule"],
+            ["02", "Finance engine", "DSO/DIO/DPO, cash bridge, DSCR, ROI vs WACC"],
+            ["03", "Evidence layer", "Источник, формула, период, confidence и ограничения"],
+            ["04", "LLM brief", "Qwen3 формирует объяснение и вопросы для C-level"],
+            ["05", "Expert review", "Финансовый эксперт подтверждает high-stakes выводы"]
+          ].map(([step, title, text]) => (
+            <article className="model-step" key={step}>
+              <span className="mono">{step}</span>
+              <strong>{title}</strong>
+              <p>{text}</p>
+            </article>
+          ))}
         </section>
       </section>
     </>
