@@ -86,3 +86,8 @@ export function isSupabaseConfigured() {
   const env = getRuntimeEnv();
   return Boolean(env.NEXT_PUBLIC_SUPABASE_URL && env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
+
+export function isDatabaseConfigured() {
+  const env = getRuntimeEnv();
+  return Boolean(env.DATABASE_URL);
+}

@@ -1,10 +1,14 @@
 import { paidOffers } from "@/lib/data/sample";
+import { isDatabaseConfigured, isSupabaseConfigured } from "@/lib/config/env";
+import { createFounderCase } from "./actions";
 
 const industries = ["Розница", "Дистрибуция", "Производство", "Услуги", "E-commerce", "Другое"];
 const financeOwners = ["Главбух", "Экономист", "Финансовый менеджер", "Финансовый директор", "Внешний консультант", "Никто системно"];
 const reports = ["БДР", "БДДС", "Баланс", "План-факт", "Кредитный график", "CAPEX-план", "Отчет по ДЗ/КЗ", "Отчет по запасам"];
 
 export default function NewCasePage() {
+  const persistenceReady = isSupabaseConfigured() && isDatabaseConfigured();
+
   return (
     <>
       <section className="page-head">
@@ -12,7 +16,9 @@ export default function NewCasePage() {
           <h1>Новый платный разбор</h1>
           <p>Сначала выбираем коммерческий формат результата, затем собираем минимальный профиль и data request.</p>
         </div>
-        <a className="button" href="/cases/north-distribution-q2/upload">Перейти к загрузке</a>
+        <span className={`label ${persistenceReady ? "info" : "medium"}`}>
+          {persistenceReady ? "persistent workspace" : "demo fallback"}
+        </span>
       </section>
 
       <section className="grid three" style={{ marginBottom: 16 }}>
@@ -30,31 +36,40 @@ export default function NewCasePage() {
         ))}
       </section>
 
-      <section className="panel">
+      <form className="panel" action={createFounderCase}>
         <div className="panel-head">
           <h2>Профиль диагностического проекта</h2>
           <span className="label info">7-14 дней</span>
         </div>
         <div className="panel-body form-grid">
-          <div className="field"><label>Название компании</label><input defaultValue="ООО Северная Дистрибуция" /></div>
-          <div className="field"><label>Отрасль</label><select defaultValue="Дистрибуция">{industries.map((item) => <option key={item}>{item}</option>)}</select></div>
-          <div className="field"><label>Годовая выручка</label><input defaultValue="1850000000" /></div>
-          <div className="field"><label>Количество сотрудников</label><input defaultValue="420" /></div>
-          <div className="field"><label>Количество юрлиц</label><input defaultValue="3" /></div>
-          <div className="field"><label>Кто отвечает за финансы</label><select defaultValue="Финансовый менеджер">{financeOwners.map((item) => <option key={item}>{item}</option>)}</select></div>
-          <div className="field"><label>Есть кредиты / лизинг</label><select defaultValue="Да"><option>Да</option><option>Нет</option></select></div>
-          <div className="field"><label>Есть CAPEX-план</label><select defaultValue="Да"><option>Да</option><option>Нет</option></select></div>
+          <div className="field"><label>Название компании</label><input name="companyName" defaultValue="ООО Северная Дистрибуция" required /></div>
+          <div className="field"><label>Отрасль</label><select name="industry" defaultValue="Дистрибуция">{industries.map((item) => <option key={item}>{item}</option>)}</select></div>
+          <div className="field"><label>Годовая выручка</label><input name="annualRevenue" inputMode="numeric" defaultValue="1850000000" required /></div>
+          <div className="field"><label>Количество сотрудников</label><input name="employeesCount" inputMode="numeric" defaultValue="420" required /></div>
+          <div className="field"><label>Количество юрлиц</label><input name="legalEntitiesCount" inputMode="numeric" defaultValue="3" required /></div>
+          <div className="field"><label>Кто отвечает за финансы</label><select name="financeOwner" defaultValue="Финансовый менеджер">{financeOwners.map((item) => <option key={item}>{item}</option>)}</select></div>
+          <div className="field"><label>Есть кредиты / лизинг</label><select name="hasDebt" defaultValue="true"><option value="true">Да</option><option value="false">Нет</option></select></div>
+          <div className="field"><label>Есть CAPEX-план</label><select name="hasCapexPlan" defaultValue="true"><option value="true">Да</option><option value="false">Нет</option></select></div>
         </div>
         <div className="panel-body">
           <h2>Какие отчеты есть</h2>
           <div className="grid three" style={{ marginTop: 12 }}>
-            {reports.map((item) => <label className="metric" key={item}><input type="checkbox" defaultChecked={item !== "План-факт"} /> {item}</label>)}
+            {reports.map((item) => (
+              <label className="metric" key={item}>
+                <input name="reportsAvailable" value={item} type="checkbox" defaultChecked={item !== "План-факт"} /> {item}
+              </label>
+            ))}
           </div>
         </div>
         <div className="panel-body">
-          <a className="button primary" href="/cases/north-distribution-q2/upload">Создать и перейти к данным</a>
+          {!persistenceReady ? (
+            <div className="note" style={{ marginBottom: 12 }}>
+              Пока Supabase/DATABASE env не настроены, кнопка ведет в demo data pack. После подключения базы она создаст приватный кейс собственника.
+            </div>
+          ) : null}
+          <button className="primary" type="submit">Создать и перейти к данным</button>
         </div>
-      </section>
+      </form>
     </>
   );
 }
