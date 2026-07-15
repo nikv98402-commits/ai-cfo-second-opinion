@@ -1,7 +1,8 @@
 ---
-status: ready-for-implementation
+status: eng-reviewed
 github_issue: https://github.com/nikv98402-commits/ai-cfo-second-opinion/issues/9
 created_at: 2026-07-15
+eng_reviewed_at: 2026-07-15
 source_docs:
   - docs/product-spec.md
   - docs/russian-founder-gtm.md
@@ -47,6 +48,28 @@ The implementation should add a real diagnostic workflow:
 6. Mark expert review status.
 7. Export the founder brief and use it in sales delivery.
 
+## Engineering Review Verdict
+
+Status: cleared with required amendments folded into this spec.
+
+Key engineering decisions:
+
+1. Keep SQLite and Prisma for this prototype, but treat enum-like fields as string columns validated by TypeScript/Zod because SQLite will not enforce product-state contracts for us.
+2. Store uploaded-file metadata in this epic, not raw files. Raw file retention, encryption, deletion SLA, and object storage are separate security work.
+3. Use server actions or route handlers as the mutation boundary. UI pages must not import Prisma directly.
+4. Add a test runner before adding the diagnostic engine tests; current `package.json` has `typecheck`, `lint`, and `build`, but no `test` script.
+5. Keep the existing `/cases/...` prototype routes working until `/diagnostics/...` reaches parity.
+
+Critical gaps found and resolved in this revision:
+
+| Gap | Risk | Resolution |
+|---|---|---|
+| Status fields were plain strings with no validation boundary | Invalid lifecycle states can enter the database silently | Add shared TypeScript constants, Zod schemas, and transition helper |
+| File upload behavior was ambiguous | Implementation could accidentally store sensitive raw financial files without policy | Metadata-only for this epic; raw storage explicitly out of scope |
+| No server-side data-access boundary | Pages/actions could couple UI directly to Prisma and make later auth/RBAC harder | Add `src/lib/diagnostics/repository.ts` and server actions |
+| Tests were specified but no runner exists | Acceptance criteria could not be executed as written | Add Vitest setup to this epic |
+| Evidence model lacked validation rules | High-risk conclusions could ship without proof | Add explicit validation gate before brief generation |
+
 ## Child Issues
 
 | # | Title | Priority | Effort | Dependencies |
@@ -75,9 +98,85 @@ Sequencing rationale: persistence must come first because the current app is sam
 
 ## Implementation Details
 
+### 0. Test Runner and Validation Foundation
+
+Before implementing diagnostic logic, add a test runner:
+
+```json
+{
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.0"
+  }
+}
+```
+
+Add `src/lib/diagnostics/constants.ts`:
+
+```ts
+export const OFFER_TYPES = ["diagnostic", "monitoring", "trigger_review"] as const;
+export const DIAGNOSTIC_STATUSES = ["draft", "data_requested", "data_received", "analyzing", "expert_review", "delivered", "archived"] as const;
+export const DOCUMENT_STATUSES = ["requested", "uploaded", "mapped", "parsed", "needs_clarification", "rejected"] as const;
+export const DATA_QUALITY_STATUSES = ["pass", "warning", "fail", "not_applicable"] as const;
+export const EVIDENCE_TYPES = ["verified_fact", "calculated_metric", "management_assumption", "ai_hypothesis"] as const;
+export const EXPERT_REVIEW_STATUSES = ["not_reviewed", "needs_clarification", "reviewed", "blocked"] as const;
+```
+
+Add `src/lib/diagnostics/schema.ts` with Zod schemas for every create/update input. All server actions and repository writes must validate through these schemas.
+
+### 0.1 Data Access Boundary
+
+Create:
+
+| File | Purpose |
+|---|---|
+| `src/lib/db/prisma.ts` | Singleton Prisma client |
+| `src/lib/diagnostics/repository.ts` | CRUD/query functions for diagnostic projects and related records |
+| `src/lib/diagnostics/actions.ts` | Server actions used by UI forms |
+| `src/lib/diagnostics/fixtures.ts` | Demo diagnostic project and sample data |
+
+Rule: React pages may call server actions or read helpers, but must not perform ad hoc Prisma writes.
+
+Initial repository API:
+
+```ts
+export async function listDiagnosticProjects(): Promise<DiagnosticProjectSummary[]>;
+export async function getDiagnosticProject(id: string): Promise<DiagnosticProjectDetail | null>;
+export async function createDiagnosticProject(input: CreateDiagnosticProjectInput): Promise<{ id: string }>;
+export async function updateDiagnosticStatus(id: string, nextStatus: DiagnosticStatus): Promise<void>;
+export async function upsertUploadedDocument(input: UpsertUploadedDocumentInput): Promise<{ id: string }>;
+export async function replaceDataQualityChecks(projectId: string, checks: DataQualityCheckInput[]): Promise<void>;
+export async function replaceEvidenceItems(projectId: string, items: EvidenceItemInput[]): Promise<void>;
+export async function createFounderBrief(input: CreateFounderBriefInput): Promise<{ id: string }>;
+export async function updateExpertReview(input: UpdateExpertReviewInput): Promise<void>;
+```
+
+### 0.2 Status Transition Rules
+
+Create `src/lib/diagnostics/status.ts`:
+
+```ts
+const allowedTransitions = {
+  draft: ["data_requested", "archived"],
+  data_requested: ["data_received", "archived"],
+  data_received: ["analyzing", "data_requested", "archived"],
+  analyzing: ["expert_review", "data_requested", "archived"],
+  expert_review: ["delivered", "data_requested", "archived"],
+  delivered: ["archived"],
+  archived: []
+} satisfies Record<DiagnosticStatus, DiagnosticStatus[]>;
+```
+
+Acceptance: invalid transitions throw a typed error and are covered by unit tests.
+
 ### 1. Prisma Schema
 
 Extend `prisma/schema.prisma` with these models. Keep SQLite for MVP.
+
+Implementation note: keep fields such as `offerType`, `status`, `reportType`, `evidenceType`, and `confidence` as `String` for SQLite compatibility, but validate every write through shared Zod schemas and constants.
 
 ```prisma
 model DiagnosticProject {
@@ -110,7 +209,8 @@ model UploadedDocument {
   periodLabel         String?
   status              String // requested | uploaded | mapped | parsed | needs_clarification | rejected
   missingReason       String?
-  storageKey          String?
+  storageKey          String? // metadata only in this epic; raw file storage is out of scope
+  originalRetained    Boolean  @default(false)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
@@ -134,6 +234,7 @@ model EvidenceItem {
   conclusionKey       String
   evidenceType        String // verified_fact | calculated_metric | management_assumption | ai_hypothesis
   sourceDocumentId    String?
+  sourceDocument      UploadedDocument? @relation(fields: [sourceDocumentId], references: [id], onDelete: SetNull)
   metricName          String?
   periodLabel         String?
   formula             String?
@@ -157,6 +258,8 @@ model FounderBrief {
   maturitySummary     Json
   nextActions30_60_90 Json
   markdownBody        String
+  dataQualityScore    Int
+  expertReviewStatus  String
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
@@ -198,6 +301,8 @@ export interface DataPackRequirement {
   whyItMattersRu: string;
 }
 ```
+
+Also define `CreateDiagnosticProjectInput`, `UpsertUploadedDocumentInput`, `DataQualityCheckInput`, `EvidenceItemInput`, `CreateFounderBriefInput`, and `UpdateExpertReviewInput` in `src/lib/diagnostics/schema.ts` via `z.infer`.
 
 ### 3. Data Pack Requirements
 
@@ -242,6 +347,23 @@ Labels:
 - `40-59`: low confidence.
 - `<40`: not decision-grade.
 
+The data quality engine must return both aggregate score and individual checks:
+
+```ts
+export interface DataQualityResult {
+  score: number;
+  label: "decision_grade" | "usable_with_warnings" | "low_confidence" | "not_decision_grade";
+  checks: DataQualityCheckInput[];
+  blockingReasons: string[];
+}
+```
+
+Brief generation must be blocked when:
+
+- score is below 40;
+- any `critical` check has status `fail`;
+- there are no evidence items for high/critical conclusions.
+
 ### 5. Evidence Trail
 
 Extend analysis output so every material conclusion can point to evidence:
@@ -264,6 +386,19 @@ Rules:
 - No high/critical conclusion can be shown in the owner brief without at least one `EvidenceItem`.
 - AI-generated hypotheses must be labeled `ai_hypothesis` and cannot be presented as verified fact.
 - Missing data should lower confidence and create a question for the finance team, not silently disappear.
+
+Add `src/lib/diagnostics/evidence.ts`:
+
+```ts
+export function validateEvidenceCoverage(conclusions: EvidenceBackedConclusion[], evidenceItems: EvidenceItemInput[]): EvidenceCoverageResult;
+```
+
+Required behavior:
+
+- `critical` and `high` conclusions require at least one evidence item.
+- `medium` conclusions without evidence are allowed only with `confidence: "low"`.
+- `ai_hypothesis` evidence cannot be the only evidence for `critical` conclusions.
+- Contradictory evidence should not block generation, but must be listed in the brief.
 
 ### 6. Owner Brief Structure
 
@@ -297,6 +432,20 @@ Add or update routes:
 
 Keep existing `/cases/...` routes working during migration.
 
+Navigation update:
+
+- Add `/diagnostics` to `app/layout.tsx` sidebar.
+- Keep current `/cases/...` links under a "Prototype sample" section until diagnostics pages cover the same report flow.
+
+Route implementation order:
+
+1. `/diagnostics` with fixture-backed summaries.
+2. `/diagnostics/new` with server action-backed creation.
+3. `/diagnostics/[id]/data-pack` with checklist and metadata updates.
+4. `/diagnostics/[id]/quality` with deterministic checks.
+5. `/diagnostics/[id]/brief` with generated Markdown.
+6. `/diagnostics/[id]/review` with expert-review update form.
+
 ### 8. Analytics Events
 
 Create simple event constants in `src/lib/diagnostics/events.ts`:
@@ -312,6 +461,17 @@ diagnostic_converted_to_monitoring
 ```
 
 For MVP, events can be logged to console or a local `AnalyticsEvent` Prisma model if implementation time allows. Do not block core workflow on analytics infrastructure.
+
+### 9. Seed/Demo Data
+
+Add a deterministic demo diagnostic project so the UI works immediately after checkout:
+
+| File | Purpose |
+|---|---|
+| `src/lib/diagnostics/fixtures.ts` | In-memory fallback demo data |
+| `prisma/seed.ts` | Optional SQLite seed once persistence is wired |
+
+Acceptance: if the database is empty, `/diagnostics` can still show one demo project clearly labeled `demo`.
 
 ## Acceptance Criteria
 
@@ -329,7 +489,11 @@ For MVP, events can be logged to console or a local `AnalyticsEvent` Prisma mode
 12. Expert review status can be marked as `not_reviewed`, `needs_clarification`, `reviewed`, or `blocked`.
 13. Delivered brief displays expert review status visibly near the executive verdict.
 14. Existing sample case report at `/cases/north-distribution-q2/report` still renders.
-15. `npm run typecheck`, `npm run lint`, and `npm run build` pass.
+15. Invalid diagnostic status transitions are rejected by unit tests.
+16. Server actions validate inputs with Zod before repository writes.
+17. Raw uploaded file contents are not persisted by this epic; only metadata/status is stored.
+18. Empty database state still renders a demo diagnostic project or a clear empty state without crashing.
+19. `npm run typecheck`, `npm run lint`, `npm run test`, and `npm run build` pass.
 
 ## Testing Plan
 
@@ -340,6 +504,8 @@ For MVP, events can be logged to console or a local `AnalyticsEvent` Prisma mode
 | Unit | Evidence-backed conclusion validation | +6 |
 | Unit | Founder brief markdown section generation | +6 |
 | Unit | Diagnostic status transition helper | +6 |
+| Unit | Zod schemas reject invalid statuses/report types | +8 |
+| Unit | Brief generation blocks low data-quality inputs | +4 |
 | Integration | Create diagnostic -> complete data pack -> generate quality score | +2 |
 | Integration | Analysis result -> evidence items -> owner brief | +2 |
 | Integration | Expert review status update appears on brief | +2 |
@@ -352,10 +518,28 @@ For MVP, events can be logged to console or a local `AnalyticsEvent` Prisma mode
 | File | Change |
 |---|---|
 | `prisma/schema.prisma:10` | Add diagnostic project, upload, quality, evidence, brief, review models |
+| `package.json` | Add `test` and `test:watch` scripts plus Vitest |
+| `src/lib/db/prisma.ts` | Add Prisma singleton |
+| `src/lib/diagnostics/constants.ts` | Add enum-like constants |
+| `src/lib/diagnostics/schema.ts` | Add Zod input schemas |
+| `src/lib/diagnostics/repository.ts` | Add diagnostic persistence boundary |
+| `src/lib/diagnostics/actions.ts` | Add server actions for UI mutations |
+| `src/lib/diagnostics/status.ts` | Add lifecycle transition validation |
+| `src/lib/diagnostics/data-quality.ts` | Add deterministic data-quality engine |
+| `src/lib/diagnostics/evidence.ts` | Add evidence coverage validation |
+| `src/lib/diagnostics/brief.ts` | Add founder brief generation |
+| `src/lib/diagnostics/fixtures.ts` | Add demo project fallback |
 | `src/lib/finance/types.ts:103` | Add evidence-backed conclusion types or compose from diagnostics types |
 | `src/lib/finance/analysis.ts:10` | Return evidence-compatible analysis payload |
 | `src/lib/finance/rules.ts` | Add stable `conclusionKey` mapping and evidence references |
 | `app/page.tsx:6` | Keep dashboard but later point to real diagnostic projects |
+| `app/layout.tsx:21` | Add diagnostics navigation while preserving prototype links |
+| `app/diagnostics/page.tsx` | New diagnostic project list |
+| `app/diagnostics/new/page.tsx` | New diagnostic creation flow |
+| `app/diagnostics/[id]/data-pack/page.tsx` | New checklist/upload metadata flow |
+| `app/diagnostics/[id]/quality/page.tsx` | New data quality view |
+| `app/diagnostics/[id]/brief/page.tsx` | New founder brief view |
+| `app/diagnostics/[id]/review/page.tsx` | New expert review status view |
 | `app/cases/[id]/upload/page.tsx:7` | Preserve old page while adding `/diagnostics/[id]/data-pack` |
 | `app/cases/[id]/report/page.tsx:7` | Preserve old report while adding owner brief route |
 | `docs/russian-founder-gtm.md` | Source of GTM and pricing assumptions |
@@ -367,6 +551,7 @@ For MVP, events can be logged to console or a local `AnalyticsEvent` Prisma mode
 - Real payment processing.
 - Full auth and multi-tenant RBAC beyond existing prototype constraints.
 - PDF export; Markdown export is enough for this issue.
+- Raw uploaded-file storage, encryption, virus scanning, deletion SLA, and object storage.
 - Full bilingual implementation; keep architecture compatible, but Russian founder workflow is primary for first revenue.
 - Replacing expert review with autonomous AI approval.
 - Building a consultant/partner portal.
@@ -385,7 +570,9 @@ This work is additive. If the diagnostic workflow is unstable:
 | Component | Estimate |
 |---|---:|
 | Prisma schema and generated client | 0.5-1 day |
+| Vitest setup, constants, schemas, and status transitions | 0.5-1 day |
 | Diagnostic types and data pack rules | 0.5-1 day |
+| Repository/actions boundary | 1 day |
 | Data quality engine | 1 day |
 | Evidence model and validation | 1 day |
 | Founder brief generator | 1 day |
@@ -393,7 +580,7 @@ This work is additive. If the diagnostic workflow is unstable:
 | Expert review UI/status | 0.5-1 day |
 | Tests and build verification | 1-2 days |
 
-Total: 7-11 engineering days for one developer, assuming the current prototype remains single-user and local SQLite.
+Total: 8.5-13 engineering days for one developer, assuming the current prototype remains single-user and local SQLite.
 
 ## What's Working Well: Do Not Touch
 
@@ -405,9 +592,15 @@ Total: 7-11 engineering days for one developer, assuming the current prototype r
 
 ## Open Decisions
 
-1. Whether first implementation should use local SQLite only or add hosted Postgres immediately.
-2. Whether uploaded raw files are retained or only metadata/parsed rows are stored.
-3. Whether expert review is an internal admin-only state or visible to the founder as a trust badge.
-4. Whether first paid pilots need PDF export or Markdown/print is enough.
+Resolved by engineering review for this epic:
 
-Recommendation: choose SQLite/local prototype, retain uploaded-file metadata but not raw file storage in the first pass, make expert review visible, and defer PDF until a paid customer explicitly needs it.
+1. Use local SQLite for the first implementation.
+2. Store uploaded-file metadata only; do not retain raw file contents in this epic.
+3. Make expert review visible as a founder-facing trust badge.
+4. Use Markdown/print export; defer PDF until a paid customer explicitly needs it.
+
+Remaining open decisions for later epics:
+
+1. Hosted Postgres migration timing.
+2. Raw file retention policy, encryption details, deletion SLA, and malware scanning.
+3. Auth/RBAC boundary for multi-user customer access.
