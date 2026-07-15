@@ -9,11 +9,18 @@ type UploadedSlotState = {
   columns: string[];
   rows: Record<string, unknown>[];
   mapping: Record<string, NormalizedField | "">;
+  persistStatus: "local_preview" | "saving" | "saved" | "demo" | "failed";
+  persistedFileId?: string;
+  persistMessage?: string;
 };
 
 const initialSlotId: DataPackSlotId = "pnl";
 
-export function DataPackUploader() {
+interface DataPackUploaderProps {
+  caseId: string;
+}
+
+export function DataPackUploader({ caseId }: DataPackUploaderProps) {
   const [activeSlotId, setActiveSlotId] = useState<DataPackSlotId>(initialSlotId);
   const [uploads, setUploads] = useState<Partial<Record<DataPackSlotId, UploadedSlotState>>>({});
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +59,7 @@ export function DataPackUploader() {
       const sheet = workbook.Sheets[sheetName];
       const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: "", raw: false }).slice(0, 12);
       const columns = rows[0] ? Object.keys(rows[0]) : [];
+      const sheetNames = workbook.SheetNames;
 
       const mapping = Object.fromEntries(
         columns.map((column) => [column, suggestFieldMapping(column, activeSlot.normalizedFields) || ""])
@@ -64,14 +72,78 @@ export function DataPackUploader() {
           sheetName,
           columns,
           rows,
-          mapping
+          mapping,
+          persistStatus: "saving"
         }
       }));
+
+      await persistUpload({
+        file,
+        slot: activeSlotId,
+        sheetNames,
+        columns,
+        rows
+      });
     } catch (cause) {
       const details = cause instanceof Error ? cause.message : "Неизвестная ошибка";
       setError(`Не удалось прочитать файл: ${details}`);
     } finally {
       event.target.value = "";
+    }
+  }
+
+  async function persistUpload(input: {
+    file: File;
+    slot: DataPackSlotId;
+    sheetNames: string[];
+    columns: string[];
+    rows: Record<string, unknown>[];
+  }) {
+    const body = new FormData();
+    body.set("file", input.file);
+    body.set("slot", input.slot);
+    body.set("sheetNamesJson", JSON.stringify(input.sheetNames));
+    body.set("detectedColumnsJson", JSON.stringify(input.columns));
+    body.set("previewRowsJson", JSON.stringify(input.rows));
+
+    try {
+      const response = await fetch(`/api/cases/${caseId}/uploads`, {
+        method: "POST",
+        body
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Upload persistence failed");
+      }
+
+      setUploads((current) => {
+        const upload = current[input.slot];
+        if (!upload) return current;
+        return {
+          ...current,
+          [input.slot]: {
+            ...upload,
+            persistStatus: result.persisted ? "saved" : "demo",
+            persistedFileId: result.uploadedFile?.id,
+            persistMessage: result.persisted ? "Сохранено в private storage" : "Demo preview: raw file не сохранен"
+          }
+        };
+      });
+    } catch (cause) {
+      const details = cause instanceof Error ? cause.message : "Неизвестная ошибка";
+      setUploads((current) => {
+        const upload = current[input.slot];
+        if (!upload) return current;
+        return {
+          ...current,
+          [input.slot]: {
+            ...upload,
+            persistStatus: "failed",
+            persistMessage: details
+          }
+        };
+      });
     }
   }
 
@@ -152,6 +224,11 @@ export function DataPackUploader() {
                 <div className="metric"><span>Файл</span><strong>{activeUpload.fileName}</strong></div>
                 <div className="metric"><span>Лист</span><strong>{activeUpload.sheetName}</strong></div>
                 <div className="metric"><span>Mapping readiness</span><strong>{mappingReadiness}%</strong></div>
+                <div className="metric">
+                  <span>Persist status</span>
+                  <strong>{activeUpload.persistStatus}</strong>
+                  {activeUpload.persistMessage ? <small>{activeUpload.persistMessage}</small> : null}
+                </div>
               </div>
 
               <section className="mapping-grid">

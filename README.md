@@ -99,6 +99,7 @@ Deployment checks:
 - `/login` - founder magic-link entry point.
 - `/auth/callback` - Supabase email link callback.
 - `/cases/new` - server-side founder case creation with demo fallback until Supabase/Postgres env values are configured.
+- `/api/cases/:id/uploads` - Supabase Storage upload and `UploadedFile` metadata persistence, with demo fallback when env values are missing.
 - `npm run typecheck` - TypeScript contract.
 - `npm run build` - production build.
 

@@ -5,7 +5,12 @@ const pnl = ["revenue", "cogs", "grossProfit", "commercialExpenses", "adminExpen
 const cash = ["operatingCashFlow", "capex", "financingCashFlow", "debtRepayment", "newDebt", "cashStart", "cashEnd"] as const;
 const balance = ["cash", "accountsReceivable", "inventory", "fixedAssets", "accountsPayable", "shortTermDebt", "longTermDebt", "equity"] as const;
 
-export default function UploadPage() {
+interface UploadPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function UploadPage({ params }: UploadPageProps) {
+  const { id: caseId } = await params;
   const current = sampleInputs[1];
   const previous = sampleInputs[0];
   return (
@@ -65,7 +70,7 @@ export default function UploadPage() {
       </section>
 
       <section style={{ marginTop: 16 }}>
-        <DataPackUploader />
+        <DataPackUploader caseId={caseId} />
       </section>
     </>
   );
