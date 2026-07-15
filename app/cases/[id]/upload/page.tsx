@@ -1,4 +1,5 @@
 import { dataPack, sampleInputs } from "@/lib/data/sample";
+import { DataPackUploader } from "@/components/DataPackUploader";
 
 const pnl = ["revenue", "cogs", "grossProfit", "commercialExpenses", "adminExpenses", "payroll", "rent", "ebitda", "depreciation", "ebit", "interestExpense", "netProfit"] as const;
 const cash = ["operatingCashFlow", "capex", "financingCashFlow", "debtRepayment", "newDebt", "cashStart", "cashEnd"] as const;
@@ -47,10 +48,9 @@ export default function UploadPage() {
         </div>
 
         <aside className="panel">
-          <div className="panel-head"><h2>Файл</h2><span className="label medium">prototype</span></div>
+          <div className="panel-head"><h2>Demo template</h2><span className="label medium">fast path</span></div>
           <div className="panel-body stack">
-            <div className="field"><label>Загрузить `.xlsx` или `.csv`</label><input type="file" accept=".xlsx,.csv" /></div>
-            <p>Файл в MVP пока не парсится на сервере, но workflow уже строится вокруг проверки качества: источник, период, формула, reconciliation и влияние на confidence.</p>
+            <p>Самый надежный сценарий тестирования: дать пользователю эталонный шаблон, получить структурированные листы и сразу запустить finance engine.</p>
             <table className="table">
               <thead><tr><th>Metric</th><th>2025</th><th>2026 Q2 plan</th></tr></thead>
               <tbody>
@@ -62,6 +62,10 @@ export default function UploadPage() {
             <a className="button primary" href="/cases/north-distribution-q2/analyze">Сохранить данные и перейти к анализу</a>
           </div>
         </aside>
+      </section>
+
+      <section style={{ marginTop: 16 }}>
+        <DataPackUploader />
       </section>
     </>
   );

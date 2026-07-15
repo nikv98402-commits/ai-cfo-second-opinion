@@ -29,7 +29,7 @@ Current prototype scope:
 2. Dialogue AI second-opinion chat on the landing dashboard.
 3. Qwen3-ready OpenAI-compatible provider for llama.cpp, vLLM, or cloud endpoints.
 4. Case creation flow.
-5. Upload/mapping page with an Excel template.
+5. Upload/mapping page with data pack slots, Excel template, file preview, and manual mapping.
 6. Automatic finance analysis for liquidity, margin, CAPEX, debt, working capital, operating leverage, and finance maturity.
 7. Owner-friendly report with red flags, questions for the finance team, maturity score, hiring recommendation, and Markdown export.
 8. Prisma data model prepared for persisted cases, inputs, and analysis results.
@@ -88,6 +88,7 @@ AI-CFO second opinion for CEOs and COOs of growing companies: check financial de
 - [Backlog](docs/backlog.md)
 - [Design System](DESIGN.md)
 - [AI Runtime](docs/ai-runtime.md)
+- [Data Ingestion Architecture](docs/data-ingestion-architecture.md)
 - [Design System Preview](docs/design-system-preview.html)
 - [Competitor-Informed Design Shotgun](docs/design-shotgun-competitor-board.html)
 - [Finalized Prototype](docs/finalized-prototype.html)

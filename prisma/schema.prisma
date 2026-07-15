@@ -17,12 +17,45 @@ model Case {
   hasDebt            Boolean
   hasCapexPlan       Boolean
   financeOwner       String
-  reportsAvailable   Json
+  reportsAvailableJson String
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
   financialInputs FinancialInput[]
   analysisResults AnalysisResult[]
+  uploadedFiles   UploadedFile[]
+  evidenceItems   EvidenceItem[]
+}
+
+model UploadedFile {
+  id              String   @id @default(cuid())
+  caseId          String
+  case            Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  slot            String
+  originalName    String
+  mimeType        String?
+  storageKey      String
+  sheetNamesJson      String
+  detectedColumnsJson String
+  previewRowsJson     String
+  status          String   @default("uploaded")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  mappingProfiles MappingProfile[]
+}
+
+model MappingProfile {
+  id             String       @id @default(cuid())
+  uploadedFileId String
+  uploadedFile   UploadedFile @relation(fields: [uploadedFileId], references: [id], onDelete: Cascade)
+  slot           String
+  sourceSheet    String
+  columnMappingJson String
+  confidence     Int
+  status         String       @default("draft")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model FinancialInput {
@@ -67,6 +100,73 @@ model FinancialInput {
   updatedAt           DateTime @updatedAt
 }
 
+model WorkingCapitalAging {
+  id          String   @id @default(cuid())
+  caseId      String
+  periodName  String
+  partyName   String
+  partyType   String
+  amount      Float
+  bucket      String
+  sourceRef   String
+  createdAt   DateTime @default(now())
+}
+
+model DebtSchedule {
+  id            String   @id @default(cuid())
+  caseId        String
+  lender        String
+  facilityType  String
+  principal     Float
+  interestRate  Float?
+  dueDate       DateTime?
+  nextPayment   Float
+  covenantNotes String?
+  sourceRef     String
+  createdAt     DateTime @default(now())
+}
+
+model CapexPlan {
+  id              String   @id @default(cuid())
+  caseId          String
+  projectName     String
+  amount          Float
+  expectedRoi     Float?
+  fundingSource   String?
+  periodName      String
+  managementNote  String?
+  sourceRef       String
+  createdAt       DateTime @default(now())
+}
+
+model SalesChannelMetric {
+  id                 String   @id @default(cuid())
+  caseId             String
+  periodName         String
+  channelName        String
+  revenue            Float
+  grossMargin        Float?
+  discountRate       Float?
+  logisticsCost      Float?
+  marketplaceFee     Float?
+  contributionMargin Float?
+  sourceRef          String
+  createdAt          DateTime @default(now())
+}
+
+model EvidenceItem {
+  id          String   @id @default(cuid())
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  conclusion  String
+  sourceRef   String
+  formula     String?
+  value       String?
+  confidence  Int
+  evidenceType String
+  createdAt   DateTime @default(now())
+}
+
 model AnalysisResult {
   id                     String   @id @default(cuid())
   caseId                 String
@@ -74,18 +174,18 @@ model AnalysisResult {
   riskScore              Int
   riskLevel              String
   executiveSummary       String
-  metrics                Json
-  redFlags               Json
-  liquidityRisks         Json
-  operatingLeverageRisks Json
-  capexRisks             Json
-  debtRisks              Json
-  workingCapitalRisks    Json
-  financeMaturity        Json
-  hiringRecommendation   Json
-  questionsToFinanceTeam Json
+  metricsJson                String
+  redFlagsJson               String
+  liquidityRisksJson         String
+  operatingLeverageRisksJson String
+  capexRisksJson             String
+  debtRisksJson              String
+  workingCapitalRisksJson    String
+  financeMaturityJson        String
+  hiringRecommendationJson   String
+  questionsToFinanceTeamJson String
   ownerEducationBlock    String
-  nextActions            Json
+  nextActionsJson            String
   markdownReport         String
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
