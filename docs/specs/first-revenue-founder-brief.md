@@ -1,11 +1,13 @@
 ---
-status: eng-reviewed
+status: design-reviewed
 github_issue: https://github.com/nikv98402-commits/ai-cfo-second-opinion/issues/9
 created_at: 2026-07-15
 eng_reviewed_at: 2026-07-15
+design_reviewed_at: 2026-07-15
 source_docs:
   - docs/product-spec.md
   - docs/russian-founder-gtm.md
+  - DESIGN.md
 ---
 
 # Spec: First-Revenue Founder Brief MVP
@@ -69,6 +71,36 @@ Critical gaps found and resolved in this revision:
 | No server-side data-access boundary | Pages/actions could couple UI directly to Prisma and make later auth/RBAC harder | Add `src/lib/diagnostics/repository.ts` and server actions |
 | Tests were specified but no runner exists | Acceptance criteria could not be executed as written | Add Vitest setup to this epic |
 | Evidence model lacked validation rules | High-risk conclusions could ship without proof | Add explicit validation gate before brief generation |
+
+## Design Review Verdict
+
+Initial score: 6/10. Final score after amendments: 8.5/10.
+
+The plan is structurally strong, but before this review it over-specified backend workflow and under-specified the founder-facing trust experience. For a paid diagnostic, the UI must make the founder feel: "This is a serious confidential financial review, I know what is missing, I know what will be delivered, and I can use the brief in a real conversation with my finance team."
+
+Design decisions added:
+
+1. `/diagnostics` is a paid diagnostic pipeline, not a generic dashboard.
+2. `/diagnostics/new` must sell/confirm the paid offer in product language before collecting fields.
+3. `/data-pack` must feel like a calm due-diligence checklist, not a technical upload form.
+4. `/quality` must translate data issues into decision confidence, not show abstract validation errors.
+5. `/brief` must be an executive document with a sticky summary rail and evidence drilldowns.
+6. Expert review is a visible trust badge near the executive verdict.
+7. Russian copy is primary and must avoid shame or "financial literacy classroom" tone.
+
+Design scorecard:
+
+| Dimension | Before | After | Fix |
+|---|---:|---:|---|
+| Information architecture | 6 | 9 | Added paid diagnostic pipeline, stepper, and screen hierarchy |
+| Founder emotional journey | 5 | 8 | Added trust cues, confidentiality copy, delivery promise, and non-shaming data gaps |
+| Visual hierarchy | 6 | 8 | Added page-level layout rules, sticky summary rail, and evidence drilldowns |
+| Interaction states | 5 | 8 | Added empty/loading/error/partial/success states per route |
+| AI/trust design | 6 | 9 | Added fact/hypothesis/evidence language and expert-review badge rules |
+| Responsive/accessibility | 6 | 8 | Added mobile route behavior and non-color status requirements |
+| Content quality | 5 | 9 | Added Russian UI copy rules and concrete labels |
+
+Unresolved design decisions: none for this epic. Visual exploration can continue later, but this plan is implementable.
 
 ## Child Issues
 
@@ -446,6 +478,249 @@ Route implementation order:
 5. `/diagnostics/[id]/brief` with generated Markdown.
 6. `/diagnostics/[id]/review` with expert-review update form.
 
+### 7.1 Information Architecture and Page Contracts
+
+The diagnostics area is the first-revenue workspace. It should not look like a generic case list.
+
+#### `/diagnostics`
+
+Primary question: "Какие платные разборы сейчас в работе и что мешает доставке?"
+
+Layout:
+
+```text
+Page header
+  title: Платные разборы
+  primary action: Новый разбор
+  secondary: Открыть демо
+
+Pipeline summary
+  Draft / Data requested / Analyzing / Expert review / Delivered
+
+Diagnostic table
+  Company | Offer | Trigger | Status | Data quality | Expert review | Delivery date | Next action
+
+Right rail or top panel
+  First revenue target: 5 paid diagnostics
+  Conversion: diagnostic -> monitoring
+```
+
+Required UI states:
+
+| State | Behavior |
+|---|---|
+| Empty | Show one demo project and CTA `Создать первый платный разбор` |
+| Loading | Skeleton table with 5 rows and muted pipeline cards |
+| Error | Preserve CTA, show retry, and do not hide navigation |
+| Partial | If quality/review is missing, show `Не рассчитано` with next action |
+
+#### `/diagnostics/new`
+
+Primary question: "Какой paid offer мы продаем этому фаундеру?"
+
+The screen must start with offer cards, not a raw form.
+
+Offer cards:
+
+1. `Founder Financial Second Opinion` — 75-150k RUB, 7-14 days.
+2. `Monthly Owner Brief` — 75-300k RUB/month.
+3. `Trigger Review` — 100-300k RUB per event.
+
+Required fields after offer selection:
+
+- company name;
+- buyer role;
+- industry;
+- revenue band;
+- trigger;
+- target delivery date;
+- price;
+- notes/context.
+
+Primary CTA: `Создать разбор и запросить данные`.
+
+#### `/diagnostics/[id]/data-pack`
+
+Primary question: "Каких данных хватает для доказательного вывода, а чего не хватает?"
+
+Layout:
+
+```text
+Header
+  company | offer | delivery date | status
+
+Left/main
+  Data pack checklist grouped by BDR/P&L, Cash, Balance, Working capital, Debt, CAPEX, Finance team
+
+Right rail
+  Data readiness score
+  Missing critical documents
+  What founder should send next
+  Confidentiality note
+```
+
+Each checklist row must show:
+
+- report name;
+- required/optional;
+- why it matters;
+- status;
+- period;
+- last update;
+- action.
+
+Do not use a plain file input as the central UI. File metadata is a status object in the checklist.
+
+#### `/diagnostics/[id]/quality`
+
+Primary question: "Можно ли уже принимать решение на этих данных?"
+
+Required visual model:
+
+- large data quality score;
+- label: `Decision-grade`, `Usable with warnings`, `Low confidence`, `Not decision-grade`;
+- grouped checks by severity;
+- "What this limits" explanation;
+- "What to request next" list.
+
+Avoid raw validation language like "field missing" without business meaning. Use: "Не хватает БДДС, поэтому выводы о кассовом разрыве будут низкой уверенности."
+
+#### `/diagnostics/[id]/brief`
+
+Primary question: "Что собственнику нужно понять и сделать?"
+
+Layout:
+
+```text
+Document header
+  company | period | offer | delivery status | expert review badge
+
+Sticky summary rail
+  risk score
+  data quality
+  expert review status
+  top 3 actions
+  download markdown
+
+Main document
+  executive verdict
+  what changed
+  risk radar
+  data quality
+  evidence-backed conclusions
+  decision cards
+  questions for finance team
+  maturity and hiring
+  30/60/90 plan
+  disclaimer
+```
+
+Evidence-backed conclusions must be expandable:
+
+- collapsed: title, severity, confidence, one-sentence conclusion;
+- expanded: source document, period, formula, value, assumption/hypothesis label.
+
+#### `/diagnostics/[id]/review`
+
+Primary question: "Можно ли показывать этот brief собственнику?"
+
+Required controls:
+
+- expert review status segmented control;
+- reviewer name;
+- review notes;
+- blocking issues;
+- timestamp.
+
+Founder-facing badge labels:
+
+| Internal status | Founder-facing label |
+|---|---|
+| `not_reviewed` | `AI draft, эксперт еще не проверил` |
+| `needs_clarification` | `Нужны уточнения по данным` |
+| `reviewed` | `Проверено финансовым экспертом` |
+| `blocked` | `Нельзя использовать для решения` |
+
+### 7.2 Component Requirements
+
+Add or reuse these components:
+
+| Component | Purpose |
+|---|---|
+| `DiagnosticStatusBadge` | Status label with text + icon, not color-only |
+| `DataQualityMeter` | Score + label + short explanation |
+| `DataPackChecklist` | Grouped checklist for required reports |
+| `EvidenceDisclosure` | Expandable evidence detail for conclusions |
+| `ExpertReviewBadge` | Founder-visible trust badge |
+| `DecisionCard` | Action, owner, deadline, financial effect, reversibility |
+| `BriefSectionNav` | Sticky rail for long owner brief |
+
+Component rules:
+
+- Cards may be used for individual diagnostic projects and decision cards, but do not nest cards inside cards.
+- Data tables must right-align numbers and use tabular figures.
+- Status/risk/confidence labels must include text and icon.
+- The primary action per page must be visually singular.
+- Use restrained `Cloud Dancer`/navy/teal palette from current app direction; risk states may use semantic red/amber/green as status colors only.
+
+### 7.3 Russian UX Copy
+
+Primary copy must be Russian. English can be added later as duplicate locale, but layout must be built so English labels can fit.
+
+Required Russian labels:
+
+| Concept | Label |
+|---|---|
+| Diagnostic list | `Платные разборы` |
+| New diagnostic | `Новый разбор` |
+| Data pack | `Пакет данных` |
+| Data quality | `Качество данных` |
+| Evidence trail | `Доказательная база` |
+| Owner brief | `Бриф собственника` |
+| Expert review | `Экспертная проверка` |
+| Decision-grade | `Достаточно для решения` |
+| Usable with warnings | `Можно использовать с оговорками` |
+| Low confidence | `Низкая уверенность` |
+| Not decision-grade | `Недостаточно для решения` |
+| What to request next | `Что запросить дальше` |
+| Questions for finance team | `Вопросы финансовой команде` |
+
+Tone rules:
+
+- Say `не хватает данных для уверенного вывода`, not `данные плохие`.
+- Say `это снижает уверенность`, not `вы не предоставили`.
+- Say `что запросить у финансовой команды`, not `что они не сделали`.
+- Avoid school-like wording such as `урок`, `тест на грамотность`, `вы должны знать`.
+
+### 7.4 Mobile and Responsive Behavior
+
+Desktop:
+
+- left sidebar persists;
+- brief uses main document + sticky summary rail;
+- data pack uses checklist + right rail.
+
+Tablet:
+
+- right rail becomes top summary panel;
+- evidence disclosure remains inline.
+
+Mobile:
+
+- one primary task per screen;
+- diagnostic table becomes list rows;
+- sticky summary rail becomes a collapsible `Итог` panel at top;
+- data pack checklist groups are collapsible;
+- Markdown download remains visible at bottom of brief.
+
+Accessibility:
+
+- all checklist rows must be keyboard reachable;
+- disclosure buttons require visible focus states;
+- status labels cannot rely on color alone;
+- touch targets at least 44px;
+- brief section navigation must not trap focus.
+
 ### 8. Analytics Events
 
 Create simple event constants in `src/lib/diagnostics/events.ts`:
@@ -493,7 +768,15 @@ Acceptance: if the database is empty, `/diagnostics` can still show one demo pro
 16. Server actions validate inputs with Zod before repository writes.
 17. Raw uploaded file contents are not persisted by this epic; only metadata/status is stored.
 18. Empty database state still renders a demo diagnostic project or a clear empty state without crashing.
-19. `npm run typecheck`, `npm run lint`, `npm run test`, and `npm run build` pass.
+19. `/diagnostics/new` starts with offer selection cards before showing the form fields.
+20. `/diagnostics/[id]/data-pack` shows grouped checklist rows with `why it matters` copy for each required report.
+21. `/diagnostics/[id]/quality` translates technical data gaps into business confidence explanations.
+22. `/diagnostics/[id]/brief` has a sticky desktop summary rail and a mobile collapsible summary panel.
+23. High/critical evidence-backed conclusions are expandable and show source/period/formula/confidence.
+24. Expert review status is visible near the executive verdict using founder-facing Russian labels.
+25. All status/risk/confidence labels include text plus an icon or explicit label and do not rely on color alone.
+26. Mobile layouts for diagnostic list, data pack, quality, and brief do not require horizontal scrolling for core actions.
+27. `npm run typecheck`, `npm run lint`, `npm run test`, and `npm run build` pass.
 
 ## Testing Plan
 
@@ -511,6 +794,10 @@ Acceptance: if the database is empty, `/diagnostics` can still show one demo pro
 | Integration | Expert review status update appears on brief | +2 |
 | E2E | Founder creates paid diagnostic and reaches data-pack screen | +1 |
 | E2E | Founder opens generated brief and downloads Markdown | +1 |
+| E2E | Mobile founder opens brief, expands evidence, and sees expert review status | +1 |
+| Accessibility | Keyboard navigation through data pack checklist and evidence disclosures | +3 |
+| Accessibility | Non-color status/risk/confidence labels | +3 |
+| Visual QA | Desktop and mobile screenshots for diagnostics list, data pack, quality, brief | +8 |
 | Regression | Existing `/cases/...` sample routes still respond | +3 |
 
 ## Files Reference
@@ -540,6 +827,14 @@ Acceptance: if the database is empty, `/diagnostics` can still show one demo pro
 | `app/diagnostics/[id]/quality/page.tsx` | New data quality view |
 | `app/diagnostics/[id]/brief/page.tsx` | New founder brief view |
 | `app/diagnostics/[id]/review/page.tsx` | New expert review status view |
+| `src/components/diagnostics/DiagnosticStatusBadge.tsx` | New status badge |
+| `src/components/diagnostics/DataQualityMeter.tsx` | New data quality score component |
+| `src/components/diagnostics/DataPackChecklist.tsx` | New grouped checklist |
+| `src/components/diagnostics/EvidenceDisclosure.tsx` | New evidence drilldown |
+| `src/components/diagnostics/ExpertReviewBadge.tsx` | New trust badge |
+| `src/components/diagnostics/DecisionCard.tsx` | New decision action card |
+| `src/components/diagnostics/BriefSectionNav.tsx` | New brief navigation/summary rail |
+| `app/globals.css` | Add diagnostics layout, sticky rail, mobile collapsible summary, badges |
 | `app/cases/[id]/upload/page.tsx:7` | Preserve old page while adding `/diagnostics/[id]/data-pack` |
 | `app/cases/[id]/report/page.tsx:7` | Preserve old report while adding owner brief route |
 | `docs/russian-founder-gtm.md` | Source of GTM and pricing assumptions |
@@ -577,10 +872,11 @@ This work is additive. If the diagnostic workflow is unstable:
 | Evidence model and validation | 1 day |
 | Founder brief generator | 1 day |
 | Diagnostic routes and UI | 2-3 days |
+| Diagnostic component states, responsive behavior, and accessibility polish | 1-2 days |
 | Expert review UI/status | 0.5-1 day |
 | Tests and build verification | 1-2 days |
 
-Total: 8.5-13 engineering days for one developer, assuming the current prototype remains single-user and local SQLite.
+Total: 9.5-15 engineering days for one developer, assuming the current prototype remains single-user and local SQLite.
 
 ## What's Working Well: Do Not Touch
 
@@ -589,6 +885,8 @@ Total: 8.5-13 engineering days for one developer, assuming the current prototype
 - Keep the restrained fintech dashboard visual direction.
 - Keep Russian as the default language for this first-revenue wedge.
 - Keep integrations out of scope until paid diagnostics prove repeat demand.
+- Keep the interface operational and dense; do not turn the first-revenue flow into a marketing landing page.
+- Keep founder-facing language calm, senior, and non-judgmental.
 
 ## Open Decisions
 
@@ -604,3 +902,16 @@ Remaining open decisions for later epics:
 1. Hosted Postgres migration timing.
 2. Raw file retention policy, encryption details, deletion SLA, and malware scanning.
 3. Auth/RBAC boundary for multi-user customer access.
+
+## Design Review Report
+
+| Review | Score | Status | Findings |
+|---|---:|---|---|
+| Information architecture | 9/10 | Clear | Diagnostics area now has a paid workflow hierarchy and route contracts |
+| Interaction states | 8/10 | Clear | Empty/loading/error/partial states added for core routes |
+| Visual hierarchy | 8/10 | Clear | Brief, data pack, and quality pages now have explicit layouts |
+| Trust design | 9/10 | Clear | Evidence, data confidence, and expert review are visible product surfaces |
+| Responsive/accessibility | 8/10 | Clear | Mobile behavior and non-color status requirements added |
+| Content voice | 9/10 | Clear | Russian labels and anti-shame copy rules added |
+
+Verdict: design plan cleared for implementation. No unresolved design decisions for this epic.
