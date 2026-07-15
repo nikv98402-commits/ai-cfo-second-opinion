@@ -43,9 +43,9 @@ export default async function UploadPage({ params }: UploadPageProps) {
         <div className="panel">
           <div className="panel-head"><h2>Ручной ввод</h2><span className="label info">2 периода</span></div>
           <div className="panel-body stack">
-            <h3>P&L / BDR</h3>
+            <h3>БДР / P&L</h3>
             <div className="form-grid">{pnl.map((key) => <div className="field" key={key}><label>{key}</label><input defaultValue={String(current[key])} /></div>)}</div>
-            <h3>Cash Flow / BDDS</h3>
+            <h3>БДДС / Cash Flow</h3>
             <div className="form-grid">{cash.map((key) => <div className="field" key={key}><label>{key}</label><input defaultValue={String(current[key])} /></div>)}</div>
             <h3>Balance</h3>
             <div className="form-grid">{balance.map((key) => <div className="field" key={key}><label>{key}</label><input defaultValue={String(current[key])} /></div>)}</div>

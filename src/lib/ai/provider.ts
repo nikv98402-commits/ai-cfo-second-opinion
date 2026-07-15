@@ -176,7 +176,7 @@ function buildMockChatAnswer(message: string) {
   if (lower.includes("cash") || lower.includes("день") || lower.includes("ликвид")) {
     return [
       "Первый фокус - не прибыль, а 13-недельная ликвидность.",
-      "Я бы попросил BDDS, bank-client сверку, aging ДЗ, график долга и план платежей.",
+      "Я бы попросил БДДС, bank-client сверку, aging ДЗ, график долга и план платежей.",
       "Дальше finance engine считает cash bridge, DSO/DIO/DPO, DSCR и размер кассового разрыва. LLM только объясняет выводы собственнику."
     ].join("\n");
   }

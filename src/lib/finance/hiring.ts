@@ -21,11 +21,11 @@ export function recommendHire(caseProfile: CaseProfile, metrics: FinanceMetrics,
   if (hasControlGap || caseProfile.annualRevenue > 1_000_000_000) {
     return {
       role: "Финансовый контролер / Head of Finance",
-      whyNow: "Компания уже крупная, но финфункция не дает связку BDR, Cash Flow, Balance и план-факт.",
+      whyNow: "Компания уже крупная, но финфункция не дает связку БДР, БДДС, Balance и план-факт.",
       keyResponsibilities: ["Месячное закрытие управленческой отчетности", "План-факт", "Контроль качества данных", "Управленческий баланс"],
       expectedSalaryRange: "300-550 тыс. RUB gross / month",
       interviewQuestions: ["Как вы внедряли plan-fact с нуля?", "Как проверяете связь P&L, Cash Flow и Balance?", "Какие ошибки чаще всего находите в управленке?"],
-      testTask: "Найти несостыковки между BDR, BDDS и Balance за период.",
+      testTask: "Найти несостыковки между БДР, БДДС и Balance за период.",
       first90DaysGoals: ["Единый пакет трех форм", "План-факт по ключевым статьям", "Список data quality проблем"]
     };
   }
@@ -49,6 +49,6 @@ export function recommendHire(caseProfile: CaseProfile, metrics: FinanceMetrics,
     expectedSalaryRange: "Сначала 180-350 тыс. RUB для контролера/аналитика",
     interviewQuestions: ["Кто будет владельцем данных?", "Какие отчеты обязательны каждый месяц?", "Какие решения нужно снять с CEO?"],
     testTask: "Собрать управленческий пакет за месяц и список несостыковок.",
-    first90DaysGoals: ["BDR/BDDS/Balance пакет", "Платежный календарь", "Первые decision models"]
+    first90DaysGoals: ["БДР/БДДС/Balance пакет", "Платежный календарь", "Первые decision models"]
   };
 }

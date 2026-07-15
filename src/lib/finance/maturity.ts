@@ -18,7 +18,7 @@ export function evaluateMaturity(caseProfile: CaseProfile) {
       "Management reporting / управленческая отчетность",
       reports.has("pnl") && reports.has("cash_flow") && reports.has("balance") ? 3.5 : 2,
       "Три формы отчетности должны быть связаны между собой.",
-      ["Единая модель BDR / BDDS / Balance", "Data freshness policy"],
+      ["Единая модель БДР / БДДС / Balance", "Data freshness policy"],
       "Собрать ежемесячный пакет трех форм."
     ),
     block(

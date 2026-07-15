@@ -144,8 +144,8 @@ export const diagnosticProjects = [
 ];
 
 export const dataPack = [
-  { name: "BDR / P&L", status: "received", why: "Маржа, EBITDA, скидки, операционный рычаг", period: "2025 + 2026 Q2 plan" },
-  { name: "BDDS / Cash Flow", status: "received", why: "Кассовый разрыв, CAPEX, debt service", period: "2025 + 2026 Q2 plan" },
+  { name: "БДР / P&L", status: "received", why: "Маржа, EBITDA, скидки, операционный рычаг", period: "2025 + 2026 Q2 plan" },
+  { name: "БДДС / Cash Flow", status: "received", why: "Кассовый разрыв, CAPEX, debt service", period: "2025 + 2026 Q2 plan" },
   { name: "Баланс", status: "received", why: "ДЗ, запасы, долг, капитал", period: "2025 + 2026 Q2 plan" },
   { name: "Aging ДЗ", status: "missing", why: "Нужен для проверки DSO и риска ликвидности", period: "последние 90 дней" },
   { name: "Сверка банк-клиент", status: "blocked", why: "Без нее cash bridge ниже уверенности", period: "июнь 2026" },
@@ -155,7 +155,7 @@ export const dataPack = [
 export const evidenceItems = [
   {
     conclusion: "ДЗ создает кассовый риск в ближайшие 45 дней",
-    source: "BDDS_Jun.xlsx / Aging request",
+    source: "БДДС_Jun.xlsx / Aging request",
     formula: "DSO = AR / Revenue * 30",
     confidence: 82,
     type: "calculated metric"

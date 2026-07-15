@@ -235,7 +235,7 @@ export function runRules(caseProfile: CaseProfile, current: FinancialInput, prev
       category: "finance_maturity",
       explanation: "Без variance analysis собственник не видит управляемость бизнеса.",
       evidence: "План-факт не отмечен среди доступных отчетов.",
-      recommendation: "Поставить ежемесячный план-факт по BDR, Cash Flow и Balance.",
+      recommendation: "Поставить ежемесячный план-факт по БДР, БДДС и Balance.",
       questionsToAsk: ["Какие отклонения разбираются ежемесячно?", "Кто владелец план-факта?"]
     }));
   }

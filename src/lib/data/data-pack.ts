@@ -65,7 +65,7 @@ export const dataPackSlots: DataPackSlot[] = [
   {
     id: "pnl",
     title: "Excel БДР / P&L",
-    shortTitle: "BDR / P&L",
+    shortTitle: "БДР / P&L",
     why: "Выручка, валовая маржа, EBITDA, скидки, операционный рычаг.",
     requiredForMvp: true,
     acceptedFormats: ".xlsx,.csv",
@@ -74,7 +74,7 @@ export const dataPackSlots: DataPackSlot[] = [
   {
     id: "cash_flow",
     title: "БДДС / Cash Flow",
-    shortTitle: "BDDS / Cash Flow",
+    shortTitle: "БДДС / Cash Flow",
     why: "Кассовый разрыв, операционный cash flow, CAPEX, financing cash flow.",
     requiredForMvp: true,
     acceptedFormats: ".xlsx,.csv",

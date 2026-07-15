@@ -26,7 +26,7 @@ export function analyzeCase(caseProfile: CaseProfile, inputs: FinancialInput[]):
     `Следующий найм: ${hiringRecommendation.role}.`
   ].join(" ");
   const ownerEducationBlock =
-    "Прибыль и cash могут расходиться: скидки и рост выручки улучшают BDR только тогда, когда contribution margin покрывает fixed costs, а дебиторка и запасы не замораживают больше денег, чем бизнес создает.";
+    "Прибыль и cash могут расходиться: скидки и рост выручки улучшают БДР только тогда, когда contribution margin покрывает fixed costs, а дебиторка и запасы не замораживают больше денег, чем бизнес создает.";
   const nextActions = [
     "Собрать bridge EBITDA -> operating cash flow.",
     "Проверить DSO/DIO/DPO и лимиты оборотного капитала.",
