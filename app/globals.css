@@ -108,10 +108,13 @@ button, input, select, textarea { font: inherit; }
   margin-bottom: 3px;
   color: var(--navy-64);
 }
-.nav-item.active, .nav-item:hover {
+.nav-item.active, .nav-item:not(.status):hover {
   background: var(--cloud-55);
   color: var(--navy);
   box-shadow: inset 3px 0 0 var(--teal);
+}
+.nav-item.status {
+  cursor: default;
 }
 
 .main {
