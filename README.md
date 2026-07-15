@@ -100,6 +100,7 @@ Deployment checks:
 - `/auth/callback` - Supabase email link callback.
 - `/cases/new` - server-side founder case creation with demo fallback until Supabase/Postgres env values are configured.
 - `/api/cases/:id/uploads` - Supabase Storage upload and `UploadedFile` metadata persistence, with demo fallback when env values are missing.
+- `/api/cases/:id/uploads/:fileId/mapping` - confirmed column mapping persistence before normalized finance inputs are created.
 - `npm run typecheck` - TypeScript contract.
 - `npm run build` - production build.
 

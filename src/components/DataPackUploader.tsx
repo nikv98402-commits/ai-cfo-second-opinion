@@ -12,6 +12,9 @@ type UploadedSlotState = {
   persistStatus: "local_preview" | "saving" | "saved" | "demo" | "failed";
   persistedFileId?: string;
   persistMessage?: string;
+  mappingStatus: "draft" | "saving" | "saved" | "demo" | "failed";
+  mappingProfileId?: string;
+  mappingMessage?: string;
 };
 
 const initialSlotId: DataPackSlotId = "pnl";
@@ -73,7 +76,8 @@ export function DataPackUploader({ caseId }: DataPackUploaderProps) {
           columns,
           rows,
           mapping,
-          persistStatus: "saving"
+          persistStatus: "saving",
+          mappingStatus: "draft"
         }
       }));
 
@@ -125,7 +129,7 @@ export function DataPackUploader({ caseId }: DataPackUploaderProps) {
           [input.slot]: {
             ...upload,
             persistStatus: result.persisted ? "saved" : "demo",
-            persistedFileId: result.uploadedFile?.id,
+            persistedFileId: result.uploadedFile?.id || `demo_${input.slot}`,
             persistMessage: result.persisted ? "Сохранено в private storage" : "Demo preview: raw file не сохранен"
           }
         };
@@ -158,10 +162,78 @@ export function DataPackUploader({ caseId }: DataPackUploaderProps) {
           mapping: {
             ...upload.mapping,
             [column]: field
-          }
+          },
+          mappingStatus: "draft",
+          mappingMessage: undefined
         }
       };
     });
+  }
+
+  async function saveMapping() {
+    if (!activeUpload) return;
+    const fileId = activeUpload.persistedFileId || `demo_${activeSlotId}`;
+
+    setUploads((current) => {
+      const upload = current[activeSlotId];
+      if (!upload) return current;
+      return {
+        ...current,
+        [activeSlotId]: {
+          ...upload,
+          mappingStatus: "saving",
+          mappingMessage: "Сохраняем mapping"
+        }
+      };
+    });
+
+    try {
+      const response = await fetch(`/api/cases/${caseId}/uploads/${fileId}/mapping`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          slot: activeSlotId,
+          sourceSheet: activeUpload.sheetName,
+          confidence: mappingReadiness,
+          columnMapping: activeUpload.mapping
+        })
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Mapping persistence failed");
+      }
+
+      setUploads((current) => {
+        const upload = current[activeSlotId];
+        if (!upload) return current;
+        return {
+          ...current,
+          [activeSlotId]: {
+            ...upload,
+            mappingStatus: result.persisted ? "saved" : "demo",
+            mappingProfileId: result.mappingProfile?.id,
+            mappingMessage: result.persisted ? "Mapping сохранен в Postgres" : "Demo mapping: будет сохранен после подключения базы"
+          }
+        };
+      });
+    } catch (cause) {
+      const details = cause instanceof Error ? cause.message : "Неизвестная ошибка";
+      setUploads((current) => {
+        const upload = current[activeSlotId];
+        if (!upload) return current;
+        return {
+          ...current,
+          [activeSlotId]: {
+            ...upload,
+            mappingStatus: "failed",
+            mappingMessage: details
+          }
+        };
+      });
+    }
   }
 
   return (
@@ -229,6 +301,11 @@ export function DataPackUploader({ caseId }: DataPackUploaderProps) {
                   <strong>{activeUpload.persistStatus}</strong>
                   {activeUpload.persistMessage ? <small>{activeUpload.persistMessage}</small> : null}
                 </div>
+                <div className="metric">
+                  <span>Mapping status</span>
+                  <strong>{activeUpload.mappingStatus}</strong>
+                  {activeUpload.mappingMessage ? <small>{activeUpload.mappingMessage}</small> : null}
+                </div>
               </div>
 
               <section className="mapping-grid">
@@ -248,7 +325,12 @@ export function DataPackUploader({ caseId }: DataPackUploaderProps) {
                 </div>
 
                 <div>
-                  <h3>Evidence preview</h3>
+                  <div className="section-head-inline">
+                    <h3>Evidence preview</h3>
+                    <button type="button" onClick={saveMapping} disabled={activeUpload.mappingStatus === "saving" || !mappedFields}>
+                      Сохранить mapping
+                    </button>
+                  </div>
                   <div className="stack">
                     {evidencePreview.length ? evidencePreview.map((item) => (
                       <div className="evidence-chip" key={`${item.column}-${item.field}`}>

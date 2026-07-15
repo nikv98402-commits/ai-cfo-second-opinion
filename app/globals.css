@@ -231,6 +231,13 @@ button:disabled, input:disabled {
   align-items: center;
 }
 .panel-body { padding: 16px; }
+.section-head-inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
 .auth-page {
   min-height: calc(100vh - 92px);
   display: grid;
