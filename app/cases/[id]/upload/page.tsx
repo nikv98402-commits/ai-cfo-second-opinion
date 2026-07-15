@@ -1,4 +1,4 @@
-import { sampleInputs } from "@/lib/data/sample";
+import { dataPack, sampleInputs } from "@/lib/data/sample";
 
 const pnl = ["revenue", "cogs", "grossProfit", "commercialExpenses", "adminExpenses", "payroll", "rent", "ebitda", "depreciation", "ebit", "interestExpense", "netProfit"] as const;
 const cash = ["operatingCashFlow", "capex", "financingCashFlow", "debtRepayment", "newDebt", "cashStart", "cashEnd"] as const;
@@ -12,9 +12,25 @@ export default function UploadPage() {
       <section className="page-head">
         <div>
           <h1>Загрузка данных</h1>
-          <p>Два режима: ручной ввод ключевых показателей и загрузка `.xlsx` / `.csv` шаблона.</p>
+          <p>Data pack для доказательного owner brief: что получено, чего не хватает и как это влияет на уверенность вывода.</p>
         </div>
         <a className="button" href="/templates/financial_case_template.xlsx">Скачать sample template</a>
+      </section>
+
+      <section className="panel" style={{ marginBottom: 16 }}>
+        <div className="panel-head">
+          <h2>Founder brief data pack</h2>
+          <span className="label info">4 из 6 источников готовы</span>
+        </div>
+        <div className="panel-body grid three">
+          {dataPack.map((item) => (
+            <div className={`data-row ${item.status}`} key={item.name}>
+              <strong>{item.name}</strong>
+              <span>{item.why}</span>
+              <span className="muted">{item.period}</span>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="grid two">
@@ -34,7 +50,7 @@ export default function UploadPage() {
           <div className="panel-head"><h2>Файл</h2><span className="label medium">prototype</span></div>
           <div className="panel-body stack">
             <div className="field"><label>Загрузить `.xlsx` или `.csv`</label><input type="file" accept=".xlsx,.csv" /></div>
-            <p>В этом MVP scaffold файл пока не парсится на сервере, но UI и template уже подготовлены под `xlsx`, `papaparse` и ручное исправление parsed preview.</p>
+            <p>Файл в MVP пока не парсится на сервере, но workflow уже строится вокруг проверки качества: источник, период, формула, reconciliation и влияние на confidence.</p>
             <table className="table">
               <thead><tr><th>Metric</th><th>2025</th><th>2026 Q2 plan</th></tr></thead>
               <tbody>
