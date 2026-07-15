@@ -74,6 +74,7 @@ AI-CFO second opinion for CEOs and COOs of growing companies: check financial de
 - [Backlog](docs/backlog.md)
 - [Design System](DESIGN.md)
 - [Design System Preview](docs/design-system-preview.html)
+- [Competitor-Informed Design Shotgun](docs/design-shotgun-competitor-board.html)
 - [Finalized Prototype](docs/finalized-prototype.html)
 - [Design Preview](docs/design-preview.html)
 

@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI-CFO Design Shotgun — Competitor-Informed Directions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Literata:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cloud: #f4f2ed;
+      --paper: #faf9f6;
+      --navy: #123752;
+      --navy-2: #31546b;
+      --muted: #6b7f8b;
+      --teal: #2b9e83;
+      --teal-soft: #ddf2eb;
+      --line: #d8d5cc;
+      --risk: #a83b35;
+      --warn: #8a5b0b;
+      --shadow: 0 18px 44px rgba(18,55,82,.11), 0 1px 2px rgba(18,55,82,.06);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--cloud);
+      color: var(--navy);
+      font-family: "IBM Plex Sans", Arial, sans-serif;
+      line-height: 1.45;
+    }
+    h1, h2, h3, p { margin: 0; }
+    .page { padding: 28px; display: grid; gap: 24px; }
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .intro-card, .variant {
+      background: rgba(250,249,246,.86);
+      border: 1px solid rgba(18,55,82,.12);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .intro-card { padding: 22px; display: grid; gap: 12px; }
+    .eyebrow { color: var(--teal); font-size: 12px; font-weight: 800; text-transform: uppercase; }
+    h1 { font-family: Commissioner, "IBM Plex Sans", sans-serif; font-size: 34px; line-height: 42px; }
+    .intro-card p, .subtle { color: var(--navy-2); }
+    .benchmarks { display: grid; gap: 10px; padding: 18px; }
+    .bench { display: grid; grid-template-columns: 62px 1fr auto; gap: 10px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 6px; background: #fffaf2; }
+    .bench strong { font-family: "IBM Plex Mono", monospace; }
+    .board { display: grid; gap: 24px; }
+    .variant-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 18px 20px;
+      border-bottom: 1px solid rgba(18,55,82,.1);
+    }
+    .variant-title { display: grid; gap: 4px; }
+    .variant-title h2 { font-family: Commissioner, "IBM Plex Sans", sans-serif; font-size: 22px; line-height: 30px; }
+    .pill { display: inline-flex; width: fit-content; border-radius: 999px; padding: 5px 9px; font-size: 12px; font-weight: 800; border: 1px solid currentColor; }
+    .screen { min-height: 580px; }
+    .mono { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 8px 12px; border-radius: 6px; background: var(--navy); color: white; font-weight: 700; }
+    .grid { display: grid; gap: 14px; }
+    .two { grid-template-columns: minmax(0,1fr) minmax(300px,.45fr); }
+    .three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .panel { border: 1px solid rgba(18,55,82,.12); border-radius: 8px; background: rgba(250,249,246,.9); overflow: hidden; }
+    .panel h3 { font-size: 15px; }
+    .panel-head { padding: 12px 14px; border-bottom: 1px solid rgba(18,55,82,.09); display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+    .panel-body { padding: 14px; }
+    .metric { display: grid; gap: 4px; padding: 12px; border: 1px solid rgba(18,55,82,.1); border-radius: 6px; background: rgba(255,255,255,.58); }
+    .metric span { color: var(--muted); font-size: 12px; }
+    .metric strong { font-family: "IBM Plex Mono", monospace; font-size: 22px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid rgba(18,55,82,.09); text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-size: 12px; background: rgba(220,229,233,.35); }
+    .bars { display: grid; grid-template-columns: repeat(8,1fr); align-items: end; gap: 7px; height: 110px; }
+    .bars span { display: block; min-height: 18px; border-radius: 4px 4px 0 0; background: rgba(43,158,131,.28); }
+    .bars span:nth-child(2n) { background: rgba(18,55,82,.16); }
+    .line { height: 74px; border-radius: 6px; background:
+      linear-gradient(135deg, transparent 9%, rgba(43,158,131,.38) 9% 13%, transparent 13% 31%, rgba(43,158,131,.38) 31% 35%, transparent 35% 60%, rgba(168,59,53,.38) 60% 64%, transparent 64%),
+      linear-gradient(180deg, transparent, rgba(43,158,131,.09)); }
+    .note { padding: 12px; border-radius: 6px; background: var(--teal-soft); color: #237a64; }
+    .risk { color: var(--risk); background: #fcebe8; }
+    .warn { color: var(--warn); background: #fff3d8; }
+
+    /* A: Flex Beacon inspired */
+    .a .screen { padding: 22px; background: #f8f6ef; display: grid; gap: 16px; }
+    .a .phone {
+      max-width: 410px;
+      margin: 0 auto;
+      border: 1px solid rgba(18,55,82,.16);
+      border-radius: 18px;
+      background: #fffdf7;
+      box-shadow: 0 24px 60px rgba(18,55,82,.18);
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+    .a .phone h3 { font-family: Literata, Georgia, serif; font-size: 24px; line-height: 30px; }
+    .a .signal { padding: 12px; border-radius: 8px; border: 1px solid rgba(18,55,82,.1); background: #f4f2ed; display: grid; gap: 6px; }
+    .a .signal strong { font-family: Literata, Georgia, serif; }
+    .a .screen > .grid { grid-template-columns: minmax(0,.95fr) minmax(0,1.05fr); align-items: center; }
+
+    /* B: Datarails evidence layer inspired */
+    .b .screen { padding: 18px; background: #eef4f6; font-family: Manrope, Arial, sans-serif; }
+    .b .data-shell { display: grid; grid-template-columns: 210px minmax(0,1fr); min-height: 540px; border: 1px solid #cbd9df; border-radius: 8px; overflow: hidden; background: white; }
+    .b aside { padding: 16px 10px; background: #123752; color: white; display: grid; align-content: start; gap: 8px; }
+    .b aside span { padding: 8px 10px; border-radius: 6px; color: rgba(255,255,255,.72); }
+    .b aside .active { background: rgba(221,242,235,.16); color: white; }
+    .b main { padding: 16px; display: grid; gap: 14px; }
+    .b .formula { font-family: "JetBrains Mono", monospace; color: #31546b; background: #edf4f7; border-radius: 6px; padding: 8px; }
+
+    /* C: Pilot expert review inspired */
+    .c .screen { padding: 20px; background: #f5f4f8; font-family: Manrope, Arial, sans-serif; }
+    .c .review-shell { display: grid; grid-template-columns: minmax(0,1fr) 320px; gap: 14px; }
+    .c .queue { display: grid; gap: 10px; }
+    .c .queue-card { padding: 12px; border: 1px solid #dad7e8; border-radius: 8px; background: #fff; display: grid; gap: 8px; }
+    .c .expert { background: #2b2442; color: white; border-radius: 8px; padding: 16px; display: grid; gap: 12px; }
+    .c .expert p { color: rgba(255,255,255,.74); }
+    .c .tier { border: 1px solid rgba(255,255,255,.18); border-radius: 6px; padding: 10px; }
+
+    /* D: Russian paid pipeline */
+    .d .screen { padding: 18px; background: var(--cloud); }
+    .d .pipeline { display: grid; grid-template-columns: 240px minmax(0,1fr) 310px; gap: 14px; }
+    .d .stage { padding: 11px; border-left: 3px solid var(--teal); background: var(--paper); border-radius: 6px; display: grid; gap: 5px; }
+    .d .brief { display: grid; gap: 12px; }
+    .d .decision { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; padding: 12px; border: 1px solid rgba(18,55,82,.12); border-radius: 6px; background: #fffdf8; }
+
+    .why { display: grid; gap: 8px; padding: 14px 20px 18px; border-top: 1px solid rgba(18,55,82,.09); color: var(--navy-2); }
+    @media (max-width: 980px) {
+      .page { padding: 14px; }
+      .intro, .two, .three, .a .screen > .grid, .b .data-shell, .c .review-shell, .d .pipeline { grid-template-columns: 1fr; }
+      .screen { min-height: auto; }
+      .b aside { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="intro">
+      <div class="intro-card">
+        <div class="eyebrow">Design shotgun / competitor-informed</div>
+        <h1>Четыре направления для AI-CFO Second Opinion</h1>
+        <p>Основано на файле <strong>AI_CFO_competitor_analysis_2026.docx</strong>: рынок подтверждает спрос не на чат, а на доверенный owner-level вывод поверх проверенных данных.</p>
+        <p class="subtle">Оценивать нужно не “красивость”, а какую модель доверия и монетизации мы хотим вывести первой.</p>
+      </div>
+      <div class="intro-card benchmarks">
+        <div class="bench"><strong>Flex</strong><span>Beacon: приватный owner brief, дефицит внимания, независимость как наш клин.</span><strong>94</strong></div>
+        <div class="bench"><strong>Datarails</strong><span>Governed data layer: источник, формула, версия, повторяемый расчет.</span><strong>86</strong></div>
+        <div class="bench"><strong>Pilot</strong><span>AI + expert review: человек подключается к исключениям и high-stakes выводам.</span><strong>82</strong></div>
+      </div>
+    </section>
+
+    <main class="board">
+      <section class="variant a">
+        <div class="variant-head">
+          <div class="variant-title">
+            <span class="pill">A / Flex Beacon lesson</span>
+            <h2>Private Owner Brief</h2>
+            <p class="subtle">Никакого бесконечного дашборда: короткий закрытый бриф собственника раз в неделю или месяц.</p>
+          </div>
+          <span class="button">Сформировать бриф</span>
+        </div>
+        <div class="screen">
+          <div class="grid">
+            <div class="phone">
+              <span class="pill">Доступно 48 часов</span>
+              <h3>Закрытый бриф собственника</h3>
+              <p>Север Дистрибуция · июнь 2026 · уверенность 78%</p>
+              <div class="signal"><strong>1. Кассовый риск</strong><span>ДЗ выросла быстрее выручки. Под риском 42 млн руб. FCF в ближайшие 45 дней.</span></div>
+              <div class="signal"><strong>2. Маржа</strong><span>Скидки в e-commerce съели 1,8 п.п. валовой маржи; эффект на EBITDA -11,4 млн руб.</span></div>
+              <div class="signal"><strong>3. Вопрос CFO</strong><span>Почему cash bridge не сходится с БДДС на 9,2 млн руб.?</span></div>
+              <div class="note">Следующее действие: запросить aging ДЗ и лимиты скидок по каналам до пятницы.</div>
+            </div>
+            <div class="grid">
+              <div class="panel">
+                <div class="panel-head"><h3>5 сигналов вместо 50 графиков</h3><span class="pill">owner-only</span></div>
+                <div class="panel-body grid three">
+                  <div class="metric"><span>Деньги под риском</span><strong>42 млн</strong></div>
+                  <div class="metric"><span>Решений</span><strong>3</strong></div>
+                  <div class="metric"><span>Вопросов CFO</span><strong>5</strong></div>
+                </div>
+              </div>
+              <div class="panel"><div class="panel-body"><div class="line"></div></div></div>
+              <div class="panel"><div class="panel-body subtle">Лучше всего для первого платного “вау”: фаундер быстро понимает, за что платит 75-150 тыс. руб.</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="why">Когда выбирать: если хотим продавать результат, а не систему. Риск: может выглядеть слишком “медиа”, если evidence trail спрятан глубоко.</div>
+      </section>
+
+      <section class="variant b">
+        <div class="variant-head">
+          <div class="variant-title">
+            <span class="pill">B / Datarails lesson</span>
+            <h2>Evidence Workspace</h2>
+            <p class="subtle">Главная ценность — не текст LLM, а проверяемый финансовый контекст, формулы и версии.</p>
+          </div>
+          <span class="button">Проверить данные</span>
+        </div>
+        <div class="screen">
+          <div class="data-shell">
+            <aside>
+              <strong>AI-CFO</strong>
+              <span class="active">Evidence graph</span>
+              <span>Data quality</span>
+              <span>Reconciliation</span>
+              <span>Formula audit</span>
+              <span>Brief export</span>
+            </aside>
+            <main>
+              <div class="grid three">
+                <div class="metric"><span>Evidence coverage</span><strong>100%</strong></div>
+                <div class="metric"><span>Data quality</span><strong>78/100</strong></div>
+                <div class="metric"><span>Conflicts</span><strong>4</strong></div>
+              </div>
+              <div class="panel">
+                <div class="panel-head"><h3>Выводы с трассировкой</h3><span class="pill">verified layer</span></div>
+                <table>
+                  <thead><tr><th>Вывод</th><th>Источник</th><th>Формула</th><th>Confidence</th></tr></thead>
+                  <tbody>
+                    <tr><td>ДЗ создает кассовый разрыв</td><td>BDDS_Jun.xlsx / Aging</td><td class="formula">DSO = AR / Revenue * 30</td><td>82%</td></tr>
+                    <tr><td>Скидка ниже contribution margin</td><td>P&L channel view</td><td class="formula">GM - logistics - marketing</td><td>74%</td></tr>
+                    <tr><td>CAPEX не разрушает ROI</td><td>CAPEX plan + loan schedule</td><td class="formula">ROI > WACC + risk buffer</td><td>68%</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="panel"><div class="panel-body"><div class="bars"><span style="height:42%"></span><span style="height:48%"></span><span style="height:52%"></span><span style="height:65%"></span><span style="height:62%"></span><span style="height:74%"></span><span style="height:86%"></span><span style="height:78%"></span></div></div></div>
+            </main>
+          </div>
+        </div>
+        <div class="why">Когда выбирать: если продаем доверие и воспроизводимость. Риск: для нефинансового CEO может показаться слишком “для FP&A”, если не вывести owner verdict наверх.</div>
+      </section>
+
+      <section class="variant c">
+        <div class="variant-head">
+          <div class="variant-title">
+            <span class="pill">C / Pilot lesson</span>
+            <h2>AI + Expert Review Queue</h2>
+            <p class="subtle">Продукт выглядит как надежный сервис: AI делает draft, эксперт проверяет только high-judgment исключения.</p>
+          </div>
+          <span class="button">Отправить эксперту</span>
+        </div>
+        <div class="screen">
+          <div class="review-shell">
+            <div class="grid">
+              <div class="grid three">
+                <div class="metric"><span>AI draft</span><strong>готов</strong></div>
+                <div class="metric"><span>Expert review</span><strong>2 ч</strong></div>
+                <div class="metric"><span>Цена</span><strong>150k</strong></div>
+              </div>
+              <div class="queue">
+                <div class="queue-card"><span class="pill risk">нужен эксперт</span><strong>Кредитный ковенант может быть нарушен при падении EBITDA на 6%</strong><p>Существенный эффект: 75 млн руб. долга. Решение необратимое в горизонте квартала.</p></div>
+                <div class="queue-card"><span class="pill warn">уточнить</span><strong>БДДС и банк-клиент расходятся на 9,2 млн руб.</strong><p>Нужна сверка переводов между юрлицами и классификация займов собственника.</p></div>
+                <div class="queue-card"><span class="pill">AI ok</span><strong>Скидки ниже contribution margin в канале маркетплейсов</strong><p>Достаточно данных для owner brief; эксперт проверит только формулировку действия.</p></div>
+              </div>
+            </div>
+            <aside class="expert">
+              <h3>Уровни участия</h3>
+              <p>Software не притворяется CFO. Эксперт подключается там, где цена ошибки выше стоимости проверки.</p>
+              <div class="tier"><strong>Software</strong><br><span>75k · data quality + draft</span></div>
+              <div class="tier"><strong>Expert review</strong><br><span>150k · verified owner brief</span></div>
+              <div class="tier"><strong>Board/CFO advisory</strong><br><span>300k+ · решения и внедрение</span></div>
+            </aside>
+          </div>
+        </div>
+        <div class="why">Когда выбирать: если первая выручка пойдет через консалтинг + SaaS. Риск: можно перегнуть в сервисную витрину и потерять SaaS-ощущение.</div>
+      </section>
+
+      <section class="variant d">
+        <div class="variant-head">
+          <div class="variant-title">
+            <span class="pill">D / Russian mid-market wedge</span>
+            <h2>Paid Diagnostic Pipeline</h2>
+            <p class="subtle">Самый прагматичный вариант для первых продаж: воронка платных разборов, data pack, качество данных, owner brief.</p>
+          </div>
+          <span class="button">Начать разбор 150k</span>
+        </div>
+        <div class="screen">
+          <div class="pipeline">
+            <div class="panel">
+              <div class="panel-head"><h3>Платные разборы</h3></div>
+              <div class="panel-body grid">
+                <div class="stage"><strong>1. Data requested</strong><span>Север Дистрибуция · 150k</span></div>
+                <div class="stage"><strong>2. Expert review</strong><span>Retail Pro · 90k</span></div>
+                <div class="stage"><strong>3. Delivered</strong><span>B2B сервис · 120k</span></div>
+              </div>
+            </div>
+            <div class="brief">
+              <div class="grid three">
+                <div class="metric"><span>Цель 30 дней</span><strong>5 paid</strong></div>
+                <div class="metric"><span>MRR pipeline</span><strong>450k</strong></div>
+                <div class="metric"><span>Repeat target</span><strong>50%</strong></div>
+              </div>
+              <div class="panel">
+                <div class="panel-head"><h3>Owner brief preview</h3><span class="pill">78% confidence</span></div>
+                <div class="panel-body grid">
+                  <div class="decision"><div><strong>Остановить скидку 12% в канале B</strong><p>Эффект: +8,4 млн руб. EBITDA за квартал.</p></div><span class="mono">14 дней</span></div>
+                  <div class="decision"><div><strong>Ввести weekly cash committee</strong><p>Эффект: снижение кассового разрыва на 35 млн руб.</p></div><span class="mono">7 дней</span></div>
+                  <div class="decision"><div><strong>Нанять казначея до CFO</strong><p>Стадия бизнеса требует контроля ликвидности раньше “большого” финдира.</p></div><span class="mono">30 дней</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h3>Data pack</h3><span class="pill">готовность</span></div>
+              <div class="panel-body grid">
+                <div class="note">BDR / P&L получен</div>
+                <div class="note">BDDS / Cash Flow получен</div>
+                <div class="note warn">Aging ДЗ нужен</div>
+                <div class="note risk">Сверка банк-клиент отсутствует</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="why">Когда выбирать: если цель — первая выручка, а не идеальная платформа. Это самый близкий вариант к текущей стратегии 75-150 тыс. руб. за 7-14 дней.</div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
