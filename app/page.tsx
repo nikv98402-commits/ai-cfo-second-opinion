@@ -45,8 +45,8 @@ export default function DashboardPage() {
         <div className="grid two">
           <article className="panel">
             <div className="panel-head">
-              <h2>Revenue attainment</h2>
-              <span className="label info">sample</span>
+              <h2>План-факт выручки</h2>
+              <span className="label info">пример</span>
             </div>
             <div className="panel-body">
               <div className="bar-preview" aria-hidden="true">
@@ -62,8 +62,8 @@ export default function DashboardPage() {
           </article>
           <article className="panel">
             <div className="panel-head">
-              <h2>Net profit waterfall</h2>
-              <span className="label medium">management view</span>
+              <h2>Водопад чистой прибыли</h2>
+              <span className="label medium">управленческий вид</span>
             </div>
             <div className="panel-body">
               <div className="waterfall" aria-hidden="true">

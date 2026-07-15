@@ -20,13 +20,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="muted">RU primary / EN duplicate ready</div>
           </header>
           <aside className="sidebar">
-            <div className="nav-title">Workspace</div>
-            <Link className="nav-item active" href="/">Dashboard</Link>
+            <div className="nav-title">Рабочая область</div>
+            <Link className="nav-item active" href="/">Разборы</Link>
             <Link className="nav-item" href="/cases/new">Создать кейс</Link>
             <Link className="nav-item" href="/cases/north-distribution-q2/upload">Загрузка данных</Link>
             <Link className="nav-item" href="/cases/north-distribution-q2/analyze">Анализ</Link>
             <Link className="nav-item" href="/cases/north-distribution-q2/report">Отчет</Link>
-            <div className="nav-title">Prototype status</div>
+            <div className="nav-title">Статус прототипа</div>
             <span className="nav-item">MOCK_AI=true</span>
           </aside>
           <main className="main">{children}</main>
