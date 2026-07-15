@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-const optionalUrl = z.string().url().optional();
+const emptyToUndefined = (value: unknown) => (value === "" ? undefined : value);
+const optionalUrl = z.preprocess(emptyToUndefined, z.string().url().optional());
 
 const runtimeEnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
@@ -79,4 +80,9 @@ export function getRuntimeReadiness(): RuntimeReadiness {
     },
     missing
   };
+}
+
+export function isSupabaseConfigured() {
+  const env = getRuntimeEnv();
+  return Boolean(env.NEXT_PUBLIC_SUPABASE_URL && env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }

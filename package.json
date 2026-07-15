@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "@supabase/ssr": "^0.12.3",
+    "@supabase/supabase-js": "^2.110.5",
     "next": "^15.3.4",
     "papaparse": "^5.4.1",
     "react": "^19.0.0",

@@ -96,8 +96,12 @@ AI_MODEL=Qwen/Qwen3-8B
 Deployment checks:
 
 - `/api/health` - runtime readiness without exposing secrets.
+- `/login` - founder magic-link entry point.
+- `/auth/callback` - Supabase email link callback.
 - `npm run typecheck` - TypeScript contract.
 - `npm run build` - production build.
+
+Prisma is configured for Supabase Postgres in the production MVP. Use `DATABASE_URL` for pooled app access and `DIRECT_URL` for migrations.
 
 ## Quality Checks
 

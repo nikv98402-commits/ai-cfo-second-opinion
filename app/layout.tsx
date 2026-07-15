@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAiRuntimeStatus } from "@/lib/ai/provider";
+import { isSupabaseConfigured } from "@/lib/config/env";
+import { getCurrentUser } from "@/lib/supabase/server";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,8 +10,10 @@ export const metadata: Metadata = {
   description: "Working prototype for executive finance second opinion"
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const aiRuntime = getAiRuntimeStatus();
+  const user = await getCurrentUser();
+  const supabaseReady = isSupabaseConfigured();
 
   return (
     <html lang="ru">
@@ -20,7 +24,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span className="mark">CF</span>
               <span>AI-CFO Second Opinion</span>
             </div>
-            <div className="muted">RU primary / EN duplicate ready</div>
+            <div className="topbar-actions">
+              <div className="muted">RU primary / EN duplicate ready</div>
+              {user ? (
+                <form action="/auth/logout" method="post" className="auth-inline">
+                  <span className="label info">{user.email}</span>
+                  <button type="submit">Выйти</button>
+                </form>
+              ) : (
+                <Link className="button" href="/login">{supabaseReady ? "Войти" : "Demo mode"}</Link>
+              )}
+            </div>
           </header>
           <aside className="sidebar">
             <div className="nav-title">Рабочая область</div>
@@ -32,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="nav-title">Статус прототипа</div>
             <span className="nav-item">{aiRuntime.provider}</span>
             <span className="nav-item">{aiRuntime.model}</span>
+            <span className="nav-item">{supabaseReady ? "supabase-ready" : "demo-open"}</span>
           </aside>
           <main className="main">{children}</main>
         </div>

@@ -3,12 +3,48 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model UserProfile {
+  id             String   @id @default(cuid())
+  supabaseUserId String   @unique
+  email          String   @unique
+  fullName       String?
+  role           String   @default("founder")
+  locale         String   @default("ru")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  companies Company[]
+  cases     Case[]
+}
+
+model Company {
+  id                 String   @id @default(cuid())
+  ownerUserId        String
+  owner              UserProfile @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  name               String
+  industry           String
+  annualRevenue      Float?
+  employeesCount     Int?
+  legalEntitiesCount Int?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  cases Case[]
+
+  @@index([ownerUserId])
 }
 
 model Case {
   id                 String   @id @default(cuid())
+  ownerUserId        String?
+  owner              UserProfile? @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  companyId          String?
+  company            Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyName        String
   industry           String
   annualRevenue      Float
@@ -25,6 +61,11 @@ model Case {
   analysisResults AnalysisResult[]
   uploadedFiles   UploadedFile[]
   evidenceItems   EvidenceItem[]
+  ownerBriefs     OwnerBrief[]
+  chatMessages    ChatMessage[]
+
+  @@index([ownerUserId])
+  @@index([companyId])
 }
 
 model UploadedFile {
@@ -43,6 +84,8 @@ model UploadedFile {
   updatedAt       DateTime @updatedAt
 
   mappingProfiles MappingProfile[]
+
+  @@index([caseId])
 }
 
 model MappingProfile {
@@ -56,6 +99,8 @@ model MappingProfile {
   status         String       @default("draft")
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+
+  @@index([uploadedFileId])
 }
 
 model FinancialInput {
@@ -98,6 +143,8 @@ model FinancialInput {
   dpo                 Float?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+
+  @@index([caseId])
 }
 
 model WorkingCapitalAging {
@@ -110,6 +157,8 @@ model WorkingCapitalAging {
   bucket      String
   sourceRef   String
   createdAt   DateTime @default(now())
+
+  @@index([caseId])
 }
 
 model DebtSchedule {
@@ -124,6 +173,8 @@ model DebtSchedule {
   covenantNotes String?
   sourceRef     String
   createdAt     DateTime @default(now())
+
+  @@index([caseId])
 }
 
 model CapexPlan {
@@ -137,6 +188,8 @@ model CapexPlan {
   managementNote  String?
   sourceRef       String
   createdAt       DateTime @default(now())
+
+  @@index([caseId])
 }
 
 model SalesChannelMetric {
@@ -152,6 +205,8 @@ model SalesChannelMetric {
   contributionMargin Float?
   sourceRef          String
   createdAt          DateTime @default(now())
+
+  @@index([caseId])
 }
 
 model EvidenceItem {
@@ -165,6 +220,8 @@ model EvidenceItem {
   confidence  Int
   evidenceType String
   createdAt   DateTime @default(now())
+
+  @@index([caseId])
 }
 
 model AnalysisResult {
@@ -189,4 +246,40 @@ model AnalysisResult {
   markdownReport         String
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
+
+  ownerBriefs OwnerBrief[]
+
+  @@index([caseId])
+}
+
+model OwnerBrief {
+  id               String   @id @default(cuid())
+  caseId           String
+  case             Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  analysisResultId String?
+  analysisResult   AnalysisResult? @relation(fields: [analysisResultId], references: [id], onDelete: SetNull)
+  title            String
+  confidence       Int
+  verdict          String
+  markdownBody     String
+  status           String   @default("draft")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([caseId])
+  @@index([analysisResultId])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  caseId    String
+  case      Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  role      String
+  content   String
+  provider  String?
+  model     String?
+  metadataJson String?
+  createdAt DateTime @default(now())
+
+  @@index([caseId])
 }
