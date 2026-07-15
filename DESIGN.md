@@ -2,110 +2,164 @@
 
 ## Product Context
 
-- **What this is:** A SaaS workspace that gives CEOs, COOs, owners, and other non-financial C-level leaders a structured AI-CFO second opinion on financial decisions.
-- **Who it's for:** Executives in growing Russian companies around 0.5-5B RUB revenue, especially distribution, wholesale, e-commerce, retail, and B2B services.
-- **Space/industry:** B2B finance, executive decision support, financial maturity diagnostics, AI-assisted analysis.
-- **Project type:** Web application / dashboard / operational finance tool.
-- **Language model:** Russian is the primary/default product language; English is a complete duplicate locale across every workflow, state, report, prompt, and export.
+- **What this is:** An owner-side financial second opinion workspace for Russian-speaking founders and CEOs who need an evidence-backed view of liquidity, margin, working capital, debt, CAPEX, and finance-function maturity.
+- **Who it's for:** Russian-speaking owners, CEOs, COOs, and commercial directors of companies around 0.5-5B RUB revenue, with first focus on distribution, wholesale, e-commerce, retail, and B2B services.
+- **First paid product:** Founder Financial Second Opinion: 75-150k RUB, 7-14 days, 8-12 page owner brief, data quality score, evidence trail, finance-team questions, and expert review status.
+- **Project type:** B2B finance web application, paid diagnostic pipeline, executive document workspace.
+- **Language model:** Russian is the primary/default UI language. English must remain a full duplicate locale, but the first-revenue workflow optimizes for Russian founder comprehension.
 
 ## Aesthetic Direction
 
-- **Direction:** Executive Finance Cockpit.
-- **Decoration level:** Intentional, restrained, data-led.
-- **Mood:** Calm, exacting, and quietly senior. The product should feel like a competent finance operator sitting next to the CEO, not like a startup landing page or a generic AI chatbot.
-- **Reference behavior:** Dense operational products, banking dashboards, trading/treasury workspaces, and mature enterprise SaaS.
+- **Direction:** Quiet Owner Assurance.
+- **Decoration level:** Restrained, structural, data-led.
+- **Mood:** Calm, exacting, confidential, senior. It should feel closer to a private investment memo and treasury dashboard than a SaaS landing page.
+- **Reference behavior:** Pigment-style financial density, Rillet/Zenly-style calm surfaces, banking dashboard precision, board-pack clarity.
+- **Anti-direction:** No AI chatbot chrome, no educational-course vibe, no marketing hero, no purple gradients, no bubbly generic SaaS cards.
 
-## Design Principles
+## Core Design Principles
 
-1. **Decision first:** Every screen should answer what the user should check, decide, or provide next.
-2. **Context visible:** Company baseline, maturity stage, data freshness, and missing data should stay near the user's active decision.
-3. **Confidence is designed:** AI answers, diagnostics, and imported metrics must show confidence, assumptions, and source context.
-4. **Dense but calm:** Prefer compact information layout, not visual noise.
-5. **No shame:** Never make the user feel financially illiterate. The product explains and guides without school-like tone.
-6. **No generic AI SaaS look:** Avoid purple gradients, centered hero blocks, decorative blobs, gradient CTAs, and icon-in-circle feature grids.
+1. **Paid workflow first:** The diagnostics area is a revenue pipeline, not a generic dashboard.
+2. **Trust before cleverness:** Show data quality, source, formula, period, confidence, and expert review before asking for belief.
+3. **Founder-readable, finance-grade:** A non-financial CEO should understand the conclusion, while a CFO can trace the evidence.
+4. **No shame:** Missing reports are framed as confidence limits, not founder incompetence.
+5. **One next action:** Every screen must make the next operational step obvious.
+6. **Document quality matters:** The owner brief should feel like something a founder can forward, print, discuss, and pay for.
 
 ## Typography
 
-- **Display / Page Titles:** Commissioner — structured, serious, strong Cyrillic support, distinctive without feeling decorative.
-- **Body / UI:** IBM Plex Sans — clear in Cyrillic and Latin, strong for form labels, dense dashboards, and long explanations.
-- **Data / Tables:** IBM Plex Mono — use for financial values, metric codes, imported column previews, and calculation snippets.
+- **Display / Page Titles:** Commissioner — serious, structured, good Cyrillic, distinctive without becoming editorial.
+- **Body / UI:** IBM Plex Sans — clear in Russian and English, strong for dense operational UI.
+- **Data / Tables:** IBM Plex Mono — tabular numbers, formulas, metric codes, imported source labels.
 - **Code / Technical:** IBM Plex Mono.
-- **Loading:** Google Fonts or self-hosted production assets.
+- **Loading:** Google Fonts in prototype; self-host fonts before production if compliance/privacy requires it.
 
 Recommended font loading:
 
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@500;600;700&family=IBM+Plex+Sans:wght@400;450;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 ```
 
 Type scale:
 
 | Token | Size | Line Height | Usage |
-|-------|------|-------------|-------|
-| `text-xs` | 12px | 16px | table metadata, helper text |
-| `text-sm` | 14px | 20px | labels, compact body, table cells |
-| `text-md` | 16px | 24px | primary body, chat answers |
-| `text-lg` | 18px | 28px | panel headings |
-| `text-xl` | 22px | 30px | page section headings |
+|---|---:|---:|---|
+| `text-xs` | 12px | 16px | status metadata, source labels |
+| `text-sm` | 14px | 20px | tables, form labels, checklist rows |
+| `text-md` | 16px | 24px | body copy, brief paragraphs |
+| `text-lg` | 18px | 26px | panel headings |
+| `text-xl` | 22px | 30px | section headings |
 | `text-2xl` | 28px | 36px | page titles |
-| `text-3xl` | 36px | 44px | rare first-screen headline |
+| `text-3xl` | 36px | 44px | rare offer-level heading |
 
 Rules:
 
-1. Use tabular numbers for financial values.
-2. Do not scale font size with viewport width.
-3. Keep letter spacing at `0`.
-4. Avoid hero-scale type inside dashboard panels.
+1. Use tabular numbers for all financial values.
+2. Keep letter spacing at `0`.
+3. Do not scale font size with viewport width.
+4. Avoid hero-scale typography inside operational screens.
+5. Long Russian labels must wrap cleanly without resizing containers.
 
 ## Color
 
-### Approach
+### Palette Strategy
 
-Restrained neutral base with teal primary action, blue-gray information, and clear risk colors. The palette should not read as purple, dark-blue-only, beige, brown/orange, or monochrome.
+Use at most three identity colors:
+
+1. **Cloud Dancer** as the main material color: calm, soft white, document-grade surface.
+2. **Deep Navy** as the authority color: text, primary actions, high-emphasis metrics.
+3. **Treasury Teal** as the constructive action color: readiness, verified evidence, active states.
+
+Semantic red/amber/green are allowed only for risk/status communication, not as brand colors.
 
 ### Core Tokens
 
 | Token | Hex | Usage |
-|-------|-----|-------|
-| `ink-900` | `#17201F` | primary text |
-| `ink-700` | `#34413F` | secondary text |
-| `ink-500` | `#65716F` | muted text |
-| `paper-000` | `#FCFCFA` | app background |
-| `paper-050` | `#F6F7F4` | subtle surface |
-| `paper-100` | `#ECEFEB` | raised surface |
-| `line-200` | `#D9DFDA` | borders |
-| `line-300` | `#C4CDC7` | stronger borders |
-| `teal-700` | `#0F6F64` | primary action |
-| `teal-800` | `#0A554D` | primary hover |
-| `slate-700` | `#40546A` | informational accent |
-| `amber-600` | `#B97810` | medium risk |
-| `red-650` | `#B3342B` | high risk |
-| `green-650` | `#287A4D` | ok / low risk |
-| `blue-650` | `#2E6E9E` | source links and info |
+|---|---|---|
+| `cloud-000` | `#F4F2ED` | Pantone-inspired Cloud Dancer app background |
+| `cloud-050` | `#FAF9F6` | primary cards, document surfaces |
+| `cloud-100` | `#E8E4DA` | raised neutral surfaces |
+| `navy-900` | `#123752` | primary text, primary action, executive emphasis |
+| `navy-700` | `#31546B` | secondary text |
+| `navy-500` | `#6B7F8B` | muted text |
+| `navy-100` | `#DCE5E9` | borders and quiet fills |
+| `teal-700` | `#2B9E83` | active state, verified evidence, positive progress |
+| `teal-100` | `#DDF2EB` | low-intensity teal fill |
+| `line-200` | `#D8D5CC` | default borders |
+| `line-300` | `#BFB9AD` | stronger dividers |
 
 ### Semantic Tokens
 
 | State | Text | Background | Border |
-|-------|------|------------|--------|
-| Success | `#287A4D` | `#EAF5EE` | `#B8DCC4` |
-| Warning | `#8A5B0B` | `#FFF4DC` | `#E8C06B` |
-| Error | `#B3342B` | `#FCEBE9` | `#E6AAA4` |
-| Info | `#2E6E9E` | `#EAF3FA` | `#B8D1E5` |
-| Neutral | `#34413F` | `#F6F7F4` | `#D9DFDA` |
+|---|---|---|---|
+| Verified / OK | `#237A64` | `#DDF2EB` | `#A9D8CA` |
+| Warning | `#8A5B0B` | `#FFF3D8` | `#E8C06B` |
+| High risk | `#A83B35` | `#FCEBE8` | `#E0A29C` |
+| Info | `#31546B` | `#EAF1F4` | `#BBCBD3` |
+| Blocked | `#123752` | `#DCE5E9` | `#9FB4C0` |
 
-### Dark Mode
+Rules:
 
-Dark mode is optional for MVP. If added, redesign surfaces instead of simply inverting colors. Reduce saturation 10-20%, keep risk labels readable, and preserve table contrast.
+1. Primary CTA uses `navy-900`, not teal.
+2. Teal means progress, verified evidence, active tab, or "ready".
+3. Cloud surfaces should not become beige-heavy; use navy lines/text to keep the product crisp.
+4. Risk and confidence never rely on color alone: always include text and icon.
+5. Do not use purple, violet, blue-purple, or gradient CTA patterns.
+
+## Layout
+
+### App Shell
+
+Desktop:
+
+- left sidebar: persistent navigation;
+- top bar: company, project status, data freshness, user menu;
+- main workspace: route-specific working area;
+- right rail: contextual summary when the page benefits from it.
+
+Tablet:
+
+- sidebar collapses;
+- right rail becomes top summary panel.
+
+Mobile:
+
+- one primary task per screen;
+- diagnostic list becomes stacked rows;
+- brief summary rail becomes collapsible `Итог` panel.
+
+### Diagnostic Route Layouts
+
+| Route | Primary Layout | Right/Secondary Area |
+|---|---|---|
+| `/diagnostics` | pipeline summary + diagnostic table | first revenue target panel |
+| `/diagnostics/new` | offer cards followed by form | offer promise and scope |
+| `/diagnostics/[id]/data-pack` | grouped checklist | readiness score + missing critical data |
+| `/diagnostics/[id]/quality` | score + grouped checks | what this limits + what to request next |
+| `/diagnostics/[id]/brief` | executive document | sticky summary rail |
+| `/diagnostics/[id]/review` | review form/status | founder-facing badge preview |
+
+### Radius and Shape
+
+| Element | Radius |
+|---|---:|
+| Panels | 8px |
+| Buttons | 6px |
+| Inputs | 6px |
+| Tables | 6px |
+| Modals | 8px |
+| Pills | 999px |
+
+Avoid large rounded "friendly" SaaS cards. This is a financial control product, not a consumer onboarding app.
 
 ## Spacing
 
 - **Base unit:** 4px.
-- **Density:** Compact for dashboard/table surfaces, comfortable for onboarding and diagnostic flows.
+- **Density:** Compact for dashboard/table/checklist surfaces; comfortable for brief reading.
 
 | Token | Value |
-|-------|-------|
+|---|---:|
 | `space-2xs` | 2px |
 | `space-xs` | 4px |
 | `space-sm` | 8px |
@@ -113,107 +167,219 @@ Dark mode is optional for MVP. If added, redesign surfaces instead of simply inv
 | `space-lg` | 24px |
 | `space-xl` | 32px |
 | `space-2xl` | 48px |
-| `space-3xl` | 64px |
 
 Rules:
 
-1. Tables and sidebars use 8-16px internal spacing.
-2. Diagnostic forms use 16-24px vertical rhythm.
-3. Avoid decorative whitespace that hides operational content.
+1. Checklist rows use 12-16px vertical padding.
+2. Tables use 8-12px cell padding.
+3. Brief sections use 24-32px vertical separation.
+4. Right rails use 16px internal spacing and compact headings.
 
-## Layout
+## Core Components
 
-- **Approach:** Grid-disciplined operational layout.
-- **Desktop:** persistent left sidebar, top bar, main workspace, right context rail.
-- **Tablet:** collapsible sidebar, right context as slide-over.
-- **Mobile:** bottom navigation, one primary task per screen, context as sheet.
-- **Max content width:** no fixed marketing max width for app screens; use responsive grid regions.
-- **Panel radius:** 6px.
-- **Button radius:** 6px.
-- **Input radius:** 6px.
-- **Modal radius:** 8px.
-- **Avoid:** rounded 16-24px SaaS blobs unless there is a clear component need.
+### DiagnosticStatusBadge
 
-## Component Rules
+Shows diagnostic lifecycle state with text and icon.
 
-### App Shell
+| Status | Russian Label |
+|---|---|
+| `draft` | `Черновик` |
+| `data_requested` | `Данные запрошены` |
+| `data_received` | `Данные получены` |
+| `analyzing` | `Идет анализ` |
+| `expert_review` | `Экспертная проверка` |
+| `delivered` | `Доставлено` |
+| `archived` | `Архив` |
 
-- Left navigation stays visible on desktop.
-- Top bar contains company switcher, period selector, data freshness, and user menu.
-- Right rail contains company baseline, maturity stage, missing data, recent risks, and source documents.
+### DataQualityMeter
 
-### Buttons
+Shows:
 
-- Primary buttons use `teal-700`.
-- Secondary buttons are neutral outline.
-- Ghost buttons are text/icon only.
-- Use icons for upload, search, filter, settings, download, warning, check, and close.
-- Do not use gradient buttons.
+- numeric score;
+- label;
+- one sentence explaining decision confidence;
+- top blocking reason if any.
 
-### Risk and Confidence Labels
+Labels:
 
-Risk and confidence must never rely on color alone.
+| Score | Label |
+|---:|---|
+| 80-100 | `Достаточно для решения` |
+| 60-79 | `Можно использовать с оговорками` |
+| 40-59 | `Низкая уверенность` |
+| 0-39 | `Недостаточно для решения` |
 
-Required label shape:
+### DataPackChecklist
 
-```text
-High risk    red border + text + warning icon
-Medium risk  amber border + text + warning icon
-Low risk     green border + text + check icon
-Low confidence  neutral border + text + info icon
-```
+Grouped checklist for BDR/P&L, Cash, Balance, Working capital, Debt, CAPEX, Finance team.
 
-### AI Answer Blocks
+Each row must include:
 
-AI answers use a predictable structure:
+- report name;
+- required/optional status;
+- why it matters;
+- current status;
+- period;
+- last update;
+- action.
 
-1. Short answer.
-2. Assumptions.
-3. P&L / cash flow / balance sheet logic.
-4. Calculations used.
-5. Key risks.
-6. Data needed.
+Do not center the workflow around a naked file input.
+
+### EvidenceDisclosure
+
+Collapsed:
+
+- conclusion title;
+- severity;
+- confidence;
+- one-sentence conclusion.
+
+Expanded:
+
+- source document;
+- period;
+- formula;
+- value;
+- evidence type: `verified fact`, `calculated metric`, `management assumption`, `AI hypothesis`.
+
+### ExpertReviewBadge
+
+Founder-facing trust badge near executive verdict.
+
+| Internal Status | Founder Label |
+|---|---|
+| `not_reviewed` | `AI draft, эксперт еще не проверил` |
+| `needs_clarification` | `Нужны уточнения по данным` |
+| `reviewed` | `Проверено финансовым экспертом` |
+| `blocked` | `Нельзя использовать для решения` |
+
+### DecisionCard
+
+Each decision card contains:
+
+- action;
+- owner;
+- deadline;
+- estimated impact on EBITDA, FCF, working capital, or risk;
+- reversibility;
+- evidence link.
+
+### BriefSectionNav
+
+Sticky desktop rail for long owner brief:
+
+1. Executive verdict.
+2. What changed.
+3. Risk radar.
+4. Data quality.
+5. Evidence.
+6. Decision cards.
+7. Questions for finance.
+8. 30/60/90 plan.
+
+On mobile this becomes a collapsible `Итог` panel.
+
+## Screen Contracts
+
+### Diagnostics List
+
+Primary question: `Какие платные разборы сейчас в работе и что мешает доставке?`
+
+Must show:
+
+1. Pipeline summary.
+2. Diagnostic table/list.
+3. Next action per project.
+4. Data quality and expert review status.
+5. First revenue progress: target 5 paid diagnostics.
+
+### New Diagnostic
+
+Primary question: `Какой paid offer мы продаем этому фаундеру?`
+
+Starts with offer cards:
+
+1. Founder Financial Second Opinion — 75-150k RUB, 7-14 days.
+2. Monthly Owner Brief — 75-300k RUB/month.
+3. Trigger Review — 100-300k RUB/event.
+
+Only after offer selection show the form.
+
+### Data Pack
+
+Primary question: `Каких данных хватает для доказательного вывода, а чего не хватает?`
+
+Must feel like due diligence, not uploading homework.
+
+### Data Quality
+
+Primary question: `Можно ли уже принимать решение на этих данных?`
+
+Translate technical gaps into business limits:
+
+- Bad: `field missing`.
+- Good: `Не хватает БДДС, поэтому выводы о кассовом разрыве будут низкой уверенности.`
+
+### Founder Brief
+
+Primary question: `Что собственнику нужно понять и сделать?`
+
+Must read as an executive memo:
+
+1. Executive verdict.
+2. What changed.
+3. Risk radar.
+4. Data quality.
+5. Evidence-backed conclusions.
+6. Decision cards.
 7. Questions for finance team.
-8. Recommended next action.
-9. Confidence and disclaimer.
+8. Finance maturity and hiring.
+9. 30/60/90 plan.
+10. Disclaimer.
 
-Use collapsible sections only after the short answer and risk summary are visible.
+## Content Voice
 
-### Tables
+Tone:
 
-- Use sticky headers for long tables.
-- Use IBM Plex Mono for financial values.
-- Align numbers right.
-- Never truncate critical values without tooltip or expansion.
-- On mobile, convert rows into stacked list items.
+- calm;
+- senior;
+- specific;
+- non-judgmental;
+- decision-oriented.
 
-### Upload Mapping
+Preferred Russian phrases:
 
-The upload mapping UI must show:
+| Use | Avoid |
+|---|---|
+| `Не хватает данных для уверенного вывода` | `Данные плохие` |
+| `Это снижает уверенность` | `Вы не предоставили` |
+| `Что запросить у финансовой команды` | `Что они не сделали` |
+| `Достаточно для решения` | `ОК` |
+| `Можно использовать с оговорками` | `Почти нормально` |
 
-1. Sheet preview.
-2. Report type selector.
-3. Required column mapping.
-4. Validation warnings.
-5. Confirm import step.
+Avoid:
 
-Never silently import ambiguous data.
+- school-like language;
+- "financial literacy" shaming;
+- generic AI reassurance;
+- hype words;
+- long legalistic disclaimers in primary reading flow.
 
 ## Motion
 
-- **Approach:** Minimal-functional.
+- **Approach:** minimal-functional.
 - **Duration:** micro 75ms, short 160ms, medium 240ms.
-- **Easing:** standard ease-out for enter, ease-in for exit, ease-in-out for movement.
+- **Easing:** ease-out for enter, ease-in for exit, ease-in-out for movement.
 
 Allowed:
 
-1. Row hover.
+1. Disclosure open/close.
 2. Drawer open/close.
-3. Toast enter/exit.
-4. Progress transitions in upload and diagnostic flows.
-5. AI answer streaming with reduced-motion fallback.
+3. Row hover.
+4. Checklist status transitions.
+5. Toast enter/exit.
 
-Avoid expressive motion, scroll choreography, or decorative animation.
+Avoid expressive animation and scroll choreography.
 
 ## Accessibility
 
@@ -221,114 +387,40 @@ Target WCAG 2.2 AA.
 
 Requirements:
 
-1. Minimum touch target: 44px.
-2. Visible focus states for all interactive controls.
-3. Keyboard navigation for app shell, chat composer, questionnaire, upload mapping, tables, filters, and dialogs.
-4. ARIA landmarks for navigation, main content, complementary context rail, and dialogs.
-5. Risk and confidence labels include text and icon, not color only.
-6. Normal text contrast target: at least 4.5:1.
-7. Large text contrast target: at least 3:1.
-8. Do not trap focus in drawers or modals.
+1. Touch targets at least 44px.
+2. Visible focus states.
+3. Keyboard navigation for checklist rows, evidence disclosures, segmented controls, tables, and export actions.
+4. Status/risk/confidence labels include text and icon, not color only.
+5. Normal text contrast at least 4.5:1.
+6. Brief navigation must not trap focus.
+7. Tables convert to stacked list rows on mobile.
 
-## Content Voice
+## Localization
 
-### Localization
-
-The design system must support full Russian and English parity from the first UI build.
+Russian is the default locale. English must duplicate the same information architecture and section order later.
 
 Rules:
 
-1. Every component state must have Russian and English copy before it is considered ready.
-2. Russian is the default locale; English must never lag as a partial or admin-only translation.
-3. Language switching belongs in user/account settings and can also appear in unauthenticated onboarding.
-4. UI layouts must tolerate English labels that are longer than Russian and Russian explanatory text that wraps across more lines.
-5. Do not mix languages inside the same sentence except for accepted finance abbreviations and aliases such as "BDR / P&L", "BDDS / Cash Flow", "DSO", "CAPEX", and "WACC".
-6. Risk labels, confidence labels, diagnostic stages, upload warnings, and AI answer headings need explicit translations, not generated ad hoc by the LLM.
-7. AI answer templates should preserve the same section order in both languages.
+1. Build layouts for long English and Russian text.
+2. Keep finance aliases where useful: `BDR / P&L`, `BDDS / Cash Flow`, `DSO`, `DIO`, `DPO`, `CAPEX`, `WACC`.
+3. Do not generate labels ad hoc from AI output; labels are product copy.
+4. AI answers and founder briefs should use the same section order in both languages.
 
-Tone:
+## Preview Artifact
 
-- Calm.
-- Direct.
-- Executive.
-- Specific.
-- Non-judgmental.
+The current design consultation preview is:
 
-Avoid:
+- [Design System Preview](docs/design-system-preview.html)
 
-- "You lack financial literacy."
-- "Just learn finance."
-- Generic AI reassurance.
-- Hype words.
-- School-like quizzes.
-
-Preferred language:
-
-- "What this means."
-- "What may be risky."
-- "What data would improve confidence."
-- "Questions to ask your finance team."
-- "Recommended next action."
-
-## Screen Guidance
-
-### Overview
-
-Executive risk cockpit, not BI dashboard.
-
-Must show:
-
-1. Next best action.
-2. Maturity stage.
-3. Top risks.
-4. Open decision cases.
-5. Data freshness.
-6. Finance function gaps.
-
-### Ask AI-CFO
-
-Case workspace, not blank chatbot.
-
-Must show:
-
-1. Case header.
-2. Question composer.
-3. Structured answer.
-4. Attached context.
-5. Missing data.
-6. Source documents.
-
-### Diagnostic
-
-Serious health check, not gamified quiz.
-
-Must show:
-
-1. Seven finance blocks.
-2. Progress per block.
-3. "Why this matters."
-4. "I don't know" option.
-5. Confidence impact.
-
-### Uploads
-
-Trust-building import workflow.
-
-Must show:
-
-1. File preview.
-2. Sheet selection.
-3. Report type mapping.
-4. Column mapping.
-5. Validation.
-6. Confirm import.
+It shows realistic diagnostics list, data pack, data quality, and founder brief surfaces using this design system.
 
 ## Decisions Log
 
 | Date | Decision | Rationale |
-|------|----------|-----------|
-| 2026-06-27 | Use Executive Finance Cockpit as the initial aesthetic direction | The product handles sensitive financial decisions for CEOs/COOs and needs to feel serious, operational, and trustworthy |
-| 2026-06-27 | Use Commissioner + IBM Plex Sans + IBM Plex Mono | Strong Cyrillic support, clear dashboard readability, and tabular finance values without overused default SaaS typography |
-| 2026-06-27 | Use restrained neutral palette with teal primary and semantic risk colors | Supports dense B2B finance workflows without generic AI SaaS purple/gradient patterns |
-| 2026-06-27 | Prefer chat-first progressive context | Users expect useful AI interaction quickly, while the product can collect structured diagnostic context over time |
-| 2026-06-27 | Make Russian primary and English a full duplicate locale | The target market is Russian-speaking, but the product and AI workflows must be ready for bilingual executives, investors, partners, and future expansion |
+|---|---|---|
+| 2026-06-27 | Use Executive Finance Cockpit as the initial direction | The product handles sensitive financial decisions and needs seriousness over flash |
+| 2026-06-27 | Use Commissioner + IBM Plex Sans + IBM Plex Mono | Strong Cyrillic support, readable dense UI, tabular financial values |
+| 2026-07-15 | Shift direction to Quiet Owner Assurance | First revenue depends on trust in a paid founder brief, not just dashboard competence |
+| 2026-07-15 | Use Cloud Dancer-inspired base, deep navy, and treasury teal | Pantone 2026 gives a calm document surface; navy adds authority; teal marks verified progress |
+| 2026-07-15 | Make expert review a visible founder-facing badge | Expert verification is part of the paid trust model |
+| 2026-07-15 | Treat data quality as a first-class UI surface | Founders pay to know whether the numbers are decision-grade |

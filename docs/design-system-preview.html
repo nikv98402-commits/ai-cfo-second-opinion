@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI-CFO Design System Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@500;600;700&family=IBM+Plex+Sans:wght@400;450;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cloud-000: #f4f2ed;
+      --cloud-050: #faf9f6;
+      --cloud-100: #e8e4da;
+      --navy-900: #123752;
+      --navy-700: #31546b;
+      --navy-500: #6b7f8b;
+      --navy-100: #dce5e9;
+      --teal-700: #2b9e83;
+      --teal-100: #ddf2eb;
+      --line-200: #d8d5cc;
+      --line-300: #bfb9ad;
+      --ok: #237a64;
+      --ok-bg: #ddf2eb;
+      --warn: #8a5b0b;
+      --warn-bg: #fff3d8;
+      --risk: #a83b35;
+      --risk-bg: #fcebe8;
+      --shadow: 0 1px 2px rgba(18, 55, 82, .05), 0 16px 34px rgba(18, 55, 82, .08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--cloud-000);
+      color: var(--navy-900);
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    h1, h2, h3 { font-family: Commissioner, sans-serif; margin: 0; letter-spacing: 0; }
+    h1 { font-size: 32px; line-height: 40px; }
+    h2 { font-size: 20px; line-height: 28px; }
+    h3 { font-size: 15px; line-height: 22px; }
+    p { margin: 0; color: var(--navy-700); }
+    .mono { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; }
+    .shell { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 100vh; gap: 14px; padding: 14px; }
+    .side, .top, .panel { background: rgba(250,249,246,.86); border: 1px solid rgba(18,55,82,.1); border-radius: 8px; box-shadow: var(--shadow); }
+    .side { padding: 16px 12px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; margin-bottom: 22px; }
+    .mark { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 6px; background: var(--teal-100); color: var(--teal-700); }
+    .nav-title { color: var(--navy-500); font-size: 12px; text-transform: uppercase; font-weight: 700; margin: 18px 8px 8px; }
+    .nav { display: grid; gap: 3px; }
+    .nav span { padding: 9px 10px; border-radius: 6px; color: var(--navy-700); }
+    .nav .active { color: var(--navy-900); background: var(--cloud-100); box-shadow: inset 3px 0 0 var(--teal-700); }
+    .main { display: grid; grid-template-rows: 56px 1fr; gap: 14px; min-width: 0; }
+    .top { display: flex; align-items: center; justify-content: space-between; padding: 0 18px; }
+    .workspace { display: grid; gap: 18px; }
+    .page-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+    .button { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--line-200); background: var(--cloud-050); color: var(--navy-900); font-weight: 600; }
+    .button.primary { background: var(--navy-900); border-color: var(--navy-900); color: #fff; }
+    .grid { display: grid; gap: 14px; }
+    .grid.two { grid-template-columns: minmax(0, 1.2fr) minmax(310px, .55fr); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .panel-head { padding: 14px 16px; border-bottom: 1px solid rgba(18,55,82,.1); display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+    .panel-body { padding: 16px; }
+    .label { display: inline-flex; align-items: center; gap: 6px; width: fit-content; max-width: 100%; padding: 3px 8px; border-radius: 999px; border: 1px solid currentColor; font-size: 12px; font-weight: 700; }
+    .ok { color: var(--ok); background: var(--ok-bg); }
+    .warn { color: var(--warn); background: var(--warn-bg); }
+    .risk { color: var(--risk); background: var(--risk-bg); }
+    .info { color: var(--navy-700); background: #eaf1f4; }
+    .metric { border: 1px solid rgba(18,55,82,.1); border-radius: 6px; padding: 12px; background: rgba(220,229,233,.35); }
+    .metric span { display: block; color: var(--navy-500); font-size: 12px; }
+    .metric strong { display: block; margin-top: 5px; font: 600 22px/28px "IBM Plex Mono", monospace; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid rgba(18,55,82,.1); text-align: left; vertical-align: top; }
+    th { color: var(--navy-500); font-size: 12px; background: rgba(220,229,233,.35); }
+    td.num { text-align: right; font-family: "IBM Plex Mono", monospace; }
+    .checklist { display: grid; gap: 8px; }
+    .row { display: grid; grid-template-columns: minmax(0,1fr) 128px 124px; gap: 12px; align-items: center; padding: 12px; border: 1px solid rgba(18,55,82,.1); border-radius: 6px; background: rgba(255,255,255,.42); }
+    .rail { position: sticky; top: 14px; display: grid; gap: 12px; align-self: start; }
+    .brief { display: grid; grid-template-columns: minmax(0,1fr) 280px; gap: 16px; align-items: start; }
+    .brief-section { padding: 18px 0; border-bottom: 1px solid rgba(18,55,82,.1); }
+    .swatches { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+    .swatch { border-radius: 6px; overflow: hidden; border: 1px solid rgba(18,55,82,.12); background: var(--cloud-050); }
+    .chip { height: 54px; }
+    .swatch div:last-child { padding: 8px; font-size: 12px; }
+    @media (max-width: 920px) {
+      .shell { display: block; padding: 12px; }
+      .side { display: none; }
+      .main { display: grid; grid-template-rows: auto 1fr; }
+      .top, .page-head { display: grid; gap: 10px; }
+      .grid.two, .grid.three, .brief { grid-template-columns: 1fr; }
+      .row { grid-template-columns: 1fr; }
+      .rail { position: static; }
+      .swatches { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand"><span class="mark">CF</span><span>AI-CFO</span></div>
+      <div class="nav-title">Workspace</div>
+      <div class="nav">
+        <span>Dashboard</span>
+        <span class="active">Платные разборы</span>
+        <span>Пакет данных</span>
+        <span>Бриф собственника</span>
+      </div>
+      <div class="nav-title">Prototype</div>
+      <div class="nav"><span>Sample report</span><span>MOCK_AI=true</span></div>
+    </aside>
+    <main class="main">
+      <header class="top">
+        <strong>Quiet Owner Assurance</strong>
+        <span class="label ok">● Проверено: дизайн-система</span>
+      </header>
+      <section class="workspace">
+        <div class="page-head">
+          <div>
+            <h1>Платные разборы</h1>
+            <p>Pipeline founder diagnostics: где риск, какие данные нужны, что можно доставить собственнику.</p>
+          </div>
+          <button class="button primary">Новый разбор</button>
+        </div>
+
+        <section class="grid three">
+          <article class="metric"><span>Цель первых 90 дней</span><strong>5 paid</strong></article>
+          <article class="metric"><span>Средний чек</span><strong>150k</strong></article>
+          <article class="metric"><span>Delivery SLA</span><strong>14 дней</strong></article>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h2>Diagnostic pipeline</h2><span class="label info">first revenue</span></div>
+          <div class="panel-body">
+            <table>
+              <thead><tr><th>Компания</th><th>Offer</th><th>Статус</th><th>Качество данных</th><th>Эксперт</th><th>Next action</th></tr></thead>
+              <tbody>
+                <tr><td>North Distribution</td><td>Second Opinion</td><td><span class="label warn">● Данные запрошены</span></td><td><span class="label warn">72 / с оговорками</span></td><td><span class="label info">AI draft</span></td><td>Запросить БДДС</td></tr>
+                <tr><td>Market Retail Group</td><td>Trigger Review</td><td><span class="label ok">● Expert review</span></td><td><span class="label ok">86 / достаточно</span></td><td><span class="label ok">Проверено</span></td><td>Доставить brief</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="grid two">
+          <article class="panel">
+            <div class="panel-head"><h2>Пакет данных</h2><span class="label warn">3 missing</span></div>
+            <div class="panel-body checklist">
+              <div class="row"><div><strong>BDR / P&L 12-24 мес.</strong><p>Маржа, fixed cost, operating leverage.</p></div><span class="label ok">Получено</span><span class="mono">2025-Q2</span></div>
+              <div class="row"><div><strong>BDDS / Cash Flow</strong><p>Нужно, чтобы объяснить profit-to-cash gap.</p></div><span class="label warn">Запросить</span><span class="mono">missing</span></div>
+              <div class="row"><div><strong>AR/AP aging</strong><p>Показывает, где деньги заморожены в оборотке.</p></div><span class="label ok">Mapped</span><span class="mono">Jun-26</span></div>
+            </div>
+          </article>
+          <aside class="rail">
+            <article class="panel">
+              <div class="panel-head"><h2>Качество данных</h2></div>
+              <div class="panel-body grid">
+                <div class="metric"><span>Data quality</span><strong>72/100</strong></div>
+                <p>Можно использовать с оговорками: не хватает БДДС, поэтому выводы о кассовом разрыве будут низкой уверенности.</p>
+                <span class="label warn">Что запросить дальше: БДДС</span>
+              </div>
+            </article>
+          </aside>
+        </section>
+
+        <section class="brief">
+          <article class="panel">
+            <div class="panel-head"><h2>Бриф собственника</h2><span class="label ok">Проверено финансовым экспертом</span></div>
+            <div class="panel-body">
+              <div class="brief-section"><h2>Executive verdict</h2><p>Главный риск: рост выручки финансируется оборотным капиталом быстрее, чем бизнес создает свободный денежный поток.</p></div>
+              <div class="brief-section"><h2>Evidence-backed conclusion</h2><p><strong>ДЗ и запасы растут быстрее выручки.</strong> Источник: AR aging, Inventory summary, период Jun-26, confidence high.</p></div>
+              <div class="brief-section"><h2>Questions for finance team</h2><p>1. Какая часть ДЗ просрочена больше 30 дней? 2. Какие лимиты ДЗ утверждены по клиентам?</p></div>
+            </div>
+          </article>
+          <aside class="rail">
+            <article class="panel">
+              <div class="panel-head"><h2>Итог</h2></div>
+              <div class="panel-body grid">
+                <span class="label risk">High risk</span>
+                <span class="label warn">Data quality 72</span>
+                <button class="button primary">Скачать Markdown</button>
+              </div>
+            </article>
+          </aside>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h2>Palette</h2><span class="label info">3 identity colors</span></div>
+          <div class="panel-body swatches">
+            <div class="swatch"><div class="chip" style="background:#f4f2ed"></div><div>Cloud Dancer<br><span class="mono">#F4F2ED</span></div></div>
+            <div class="swatch"><div class="chip" style="background:#123752"></div><div>Deep Navy<br><span class="mono">#123752</span></div></div>
+            <div class="swatch"><div class="chip" style="background:#2b9e83"></div><div>Treasury Teal<br><span class="mono">#2B9E83</span></div></div>
+            <div class="swatch"><div class="chip" style="background:#fff3d8"></div><div>Warning<br><span class="mono">semantic</span></div></div>
+            <div class="swatch"><div class="chip" style="background:#fcebe8"></div><div>Risk<br><span class="mono">semantic</span></div></div>
+            <div class="swatch"><div class="chip" style="background:#ddf2eb"></div><div>Verified<br><span class="mono">semantic</span></div></div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

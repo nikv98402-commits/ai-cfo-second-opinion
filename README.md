@@ -73,6 +73,7 @@ AI-CFO second opinion for CEOs and COOs of growing companies: check financial de
 - [First-Revenue Founder Brief Spec](docs/specs/first-revenue-founder-brief.md)
 - [Backlog](docs/backlog.md)
 - [Design System](DESIGN.md)
+- [Design System Preview](docs/design-system-preview.html)
 - [Finalized Prototype](docs/finalized-prototype.html)
 - [Design Preview](docs/design-preview.html)
 
