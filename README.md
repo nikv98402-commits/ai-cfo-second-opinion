@@ -85,6 +85,7 @@ AI-CFO second opinion for CEOs and COOs of growing companies: check financial de
 - [Product Spec](docs/product-spec.md)
 - [Russian Founder GTM and First Revenue Plan](docs/russian-founder-gtm.md)
 - [First-Revenue Founder Brief Spec](docs/specs/first-revenue-founder-brief.md)
+- [Production MVP Foundation Spec](docs/specs/production-mvp-foundation.md)
 - [Backlog](docs/backlog.md)
 - [Design System](DESIGN.md)
 - [AI Runtime](docs/ai-runtime.md)
