@@ -69,6 +69,36 @@ Sample upload template:
 
 - `public/templates/financial_case_template.xlsx`
 
+## Production MVP Foundation
+
+The first production link should be deployed as a Vercel project connected to GitHub `main`.
+
+Recommended stack:
+
+- Vercel for the Next.js app.
+- Supabase for magic-link auth, Postgres, private file storage, and RLS.
+- `MOCK_AI=true` for the first reliable client demo.
+- OpenAI-compatible hosted/local endpoint later via `MOCK_AI=false`.
+
+Copy `.env.example` into the Vercel environment settings and fill the real values:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+DATABASE_URL=...
+DIRECT_URL=...
+SUPABASE_STORAGE_BUCKET=case-files
+MOCK_AI=true
+AI_MODEL=Qwen/Qwen3-8B
+```
+
+Deployment checks:
+
+- `/api/health` - runtime readiness without exposing secrets.
+- `npm run typecheck` - TypeScript contract.
+- `npm run build` - production build.
+
 ## Quality Checks
 
 ```bash
