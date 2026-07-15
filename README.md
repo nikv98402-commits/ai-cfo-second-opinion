@@ -124,6 +124,7 @@ AI-CFO second opinion for CEOs and COOs of growing companies: check financial de
 - [Design System](DESIGN.md)
 - [AI Runtime](docs/ai-runtime.md)
 - [Data Ingestion Architecture](docs/data-ingestion-architecture.md)
+- [Supabase Setup](docs/supabase-setup.md)
 - [Design System Preview](docs/design-system-preview.html)
 - [Competitor-Informed Design Shotgun](docs/design-shotgun-competitor-board.html)
 - [Finalized Prototype](docs/finalized-prototype.html)
