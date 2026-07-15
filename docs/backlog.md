@@ -1,5 +1,17 @@
 # Backlog
 
+## Epic 0: First-Revenue Founder Brief
+
+Source spec: [First-Revenue Founder Brief MVP](specs/first-revenue-founder-brief.md)
+
+1. Add diagnostic project and paid-offer data model.
+2. Build founder data pack checklist and upload metadata workflow.
+3. Add data quality score and evidence item model.
+4. Generate owner brief from analysis and evidence.
+5. Add expert review status and paid diagnostic dashboard states.
+6. Add trigger-review case types and decision cards.
+7. Add first-revenue analytics events.
+
 ## Epic 1: Product Foundation
 
 1. Define initial pricing and packaging.
