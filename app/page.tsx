@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { OwnerAiChat } from "@/components/OwnerAiChat";
 import { dataPack, decisionCards, diagnosticProjects, evidenceItems, paidOffers } from "@/lib/data/sample";
 
 const statusLabel: Record<string, string> = {
@@ -67,6 +68,8 @@ export default function DashboardPage() {
           </aside>
 
           <main className="stack">
+            <OwnerAiChat />
+
             <article className="panel owner-brief">
               <div className="panel-head">
                 <div>

@@ -26,13 +26,15 @@ This repository now contains a working Next.js prototype, not only a static show
 Current prototype scope:
 
 1. Executive dashboard with a sample case.
-2. Case creation flow.
-3. Upload/mapping page with an Excel template.
-4. Automatic finance analysis for liquidity, margin, CAPEX, debt, working capital, operating leverage, and finance maturity.
-5. Owner-friendly report with red flags, questions for the finance team, maturity score, hiring recommendation, and Markdown export.
-6. Prisma data model prepared for persisted cases, inputs, and analysis results.
-7. Architecture prepared for future 1C, bank, ERP, marketplace, and AI-provider integrations.
-8. Full Russian/English duplication is a product requirement; Russian is the default language.
+2. Dialogue AI second-opinion chat on the landing dashboard.
+3. Qwen3-ready OpenAI-compatible provider for llama.cpp, vLLM, or cloud endpoints.
+4. Case creation flow.
+5. Upload/mapping page with an Excel template.
+6. Automatic finance analysis for liquidity, margin, CAPEX, debt, working capital, operating leverage, and finance maturity.
+7. Owner-friendly report with red flags, questions for the finance team, maturity score, hiring recommendation, and Markdown export.
+8. Prisma data model prepared for persisted cases, inputs, and analysis results.
+9. Architecture prepared for future 1C, bank, ERP, marketplace, and AI-provider integrations.
+10. Full Russian/English duplication is a product requirement; Russian is the default language.
 
 ## Run Locally
 
@@ -42,6 +44,18 @@ npm run dev -- -p 4190 -H 127.0.0.1
 ```
 
 Open [http://127.0.0.1:4190](http://127.0.0.1:4190).
+
+## AI Runtime
+
+The app runs with `MOCK_AI=true` by default. To connect Qwen3 through `llama.cpp` or `vLLM`, expose an OpenAI-compatible endpoint and set:
+
+```bash
+MOCK_AI=false
+OPENAI_COMPATIBLE_BASE_URL=http://127.0.0.1:8080/v1
+AI_MODEL=Qwen/Qwen3-8B
+```
+
+See [AI Runtime](docs/ai-runtime.md).
 
 Useful routes:
 
@@ -73,6 +87,7 @@ AI-CFO second opinion for CEOs and COOs of growing companies: check financial de
 - [First-Revenue Founder Brief Spec](docs/specs/first-revenue-founder-brief.md)
 - [Backlog](docs/backlog.md)
 - [Design System](DESIGN.md)
+- [AI Runtime](docs/ai-runtime.md)
 - [Design System Preview](docs/design-system-preview.html)
 - [Competitor-Informed Design Shotgun](docs/design-shotgun-competitor-board.html)
 - [Finalized Prototype](docs/finalized-prototype.html)

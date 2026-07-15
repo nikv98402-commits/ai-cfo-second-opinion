@@ -256,6 +256,85 @@ p { margin: 0; color: var(--navy-64); }
 }
 .offer-tier p { grid-column: 1 / -1; }
 
+.ai-chat-panel {
+  background: linear-gradient(180deg, rgba(255, 253, 248, 0.96), rgba(244, 242, 237, 0.78));
+}
+.chat-body {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+.chat-messages {
+  display: grid;
+  gap: 10px;
+  max-height: 360px;
+  overflow: auto;
+  padding-right: 4px;
+}
+.chat-message {
+  display: grid;
+  gap: 5px;
+  max-width: 86%;
+  border: 1px solid var(--navy-08);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: rgba(250, 249, 246, 0.9);
+}
+.chat-message span {
+  color: var(--navy-64);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.chat-message p {
+  color: var(--navy);
+  white-space: pre-wrap;
+}
+.chat-message.user {
+  justify-self: end;
+  background: var(--navy);
+  color: #fff;
+}
+.chat-message.user span,
+.chat-message.user p {
+  color: rgba(255, 255, 255, 0.86);
+}
+.prompt-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.prompt-chip {
+  min-height: 30px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: var(--teal-10);
+  color: #237a64;
+  border-color: var(--teal-28);
+  font-size: 12px;
+  font-weight: 700;
+}
+.chat-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+}
+.chat-form textarea {
+  width: 100%;
+  min-height: 72px;
+  resize: vertical;
+  border: 1px solid var(--navy-12);
+  border-radius: 8px;
+  background: rgba(250, 249, 246, 0.9);
+  color: var(--navy);
+  padding: 10px 12px;
+}
+.chat-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.54;
+}
+
 .dashboard-shell { display: grid; gap: 16px; }
 .kpi-row { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 10px; }
 .kpi-card {
@@ -291,4 +370,6 @@ p { margin: 0; color: var(--navy-64); }
   .topbar { margin: 12px; padding: 0 14px; }
   .main { padding: 18px 14px; }
   .page-head, .grid.two, .grid.three, .form-grid, .kpi-row, .diagnostic-layout { display: grid; grid-template-columns: 1fr; }
+  .chat-form { grid-template-columns: 1fr; }
+  .chat-message { max-width: 100%; }
 }

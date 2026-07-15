@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getAiRuntimeStatus } from "@/lib/ai/provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,6 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const aiRuntime = getAiRuntimeStatus();
+
   return (
     <html lang="ru">
       <body>
@@ -27,7 +30,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link className="nav-item" href="/cases/north-distribution-q2/analyze">Анализ</Link>
             <Link className="nav-item" href="/cases/north-distribution-q2/report">Отчет</Link>
             <div className="nav-title">Статус прототипа</div>
-            <span className="nav-item">MOCK_AI=true</span>
+            <span className="nav-item">{aiRuntime.provider}</span>
+            <span className="nav-item">{aiRuntime.model}</span>
           </aside>
           <main className="main">{children}</main>
         </div>
